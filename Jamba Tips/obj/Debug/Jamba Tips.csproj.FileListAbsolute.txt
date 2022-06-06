@@ -1,0 +1,11 @@
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\Jamba Tips.exe.config
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\Jamba Tips.exe
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\Jamba Tips.pdb
+K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba_Tips.Form1.resources
+K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba_Tips.Properties.Resources.resources
+K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.csproj.GenerateResource.cache
+K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.csproj.CoreCompileInputs.cache
+K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.exe
+K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.pdb
+K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.csproj.AssemblyReference.cache
+K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.csproj.SuggestedBindingRedirects.cache
