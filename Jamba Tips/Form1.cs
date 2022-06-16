@@ -440,9 +440,12 @@ namespace Jamba_Tips
 
         private void numericUpDownTips_ValueChanged(object sender, EventArgs e)
         {
-            dailyTipValues[RoundTime(dateTimePicker1.Value)] = (double)numericUpDownTips.Value;
-            if (!loading)
-                CalculateCurrentDate();
+            if (numericUpDownTips.Value > 0m)
+            {
+                dailyTipValues[RoundTime(dateTimePicker1.Value)] = (double)numericUpDownTips.Value;
+                if (!loading)
+                    CalculateCurrentDate();
+            }
         }
 
         public void CalculateCurrentDate()

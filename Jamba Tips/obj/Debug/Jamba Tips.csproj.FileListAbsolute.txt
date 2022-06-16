@@ -17,8 +17,6 @@ K:\repos\Jamba Tips\Jamba Tips\bin\Debug\Microsoft.Web.WebView2.Wpf.xml
 K:\repos\Jamba Tips\Jamba Tips\bin\Debug\System.Web.Helpers.xml
 K:\repos\Jamba Tips\Jamba Tips\bin\Debug\System.Web.WebPages.xml
 K:\repos\Jamba Tips\Jamba Tips\bin\Debug\System.Web.WebPages.Deployment.xml
-K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.csproj.AssemblyReference.cache
-K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.csproj.SuggestedBindingRedirects.cache
 K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba_Tips.Form1.resources
 K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba_Tips.Properties.Resources.resources
 K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.csproj.GenerateResource.cache
