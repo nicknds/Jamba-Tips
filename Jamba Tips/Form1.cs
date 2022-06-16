@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Threading;
 
 namespace Jamba_Tips
 {
@@ -20,7 +22,9 @@ namespace Jamba_Tips
 
         public List<string> blacklistedEmployees = new List<string>();
 
-        public bool loading = false;
+        public bool loading = false, webviewInitialized = false;
+
+        public List<Task<string>> taskList = new List<Task<string>>();
 
         //Main functions
 
@@ -35,7 +39,6 @@ namespace Jamba_Tips
             if (Properties.Settings.Default.HomepageURL.Length > 0)
                 try
                 {
-                    webBrowser1.Navigate(Properties.Settings.Default.HomepageURL);
                     textBoxHomepage.Text = Properties.Settings.Default.HomepageURL;
                 }
                 catch { }
@@ -137,25 +140,118 @@ namespace Jamba_Tips
 
         //Browser tab
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Form1_DragDrop(object sender, DragEventArgs e)
         {
-            if (textBoxURL.Text.Length > 0)
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
                 try
                 {
-                    webBrowser1.Navigate(textBoxURL.Text);
+                    if (webviewInitialized)
+                    {
+                        webView21.CoreWebView2.Navigate($"file:///{((string[])e.Data.GetData(DataFormats.FileDrop, false))[0]}");
+                    }
                 }
                 catch { }
+            }
+        }
+
+        private void Form1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.Move;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+        private void timerLoadDelay_Tick(object sender, EventArgs e)
+        {
+            timerLoadDelay.Stop();
+            try
+            {
+                GetDays(webBrowser1.Document);
+                Output("Reading complete.");
+            }
+            catch { Output("Error parsing document"); }
         }
 
         private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            if (checkBox1.Checked)
-                GetDays(webBrowser1.Document);
+            timerLoadDelay.Stop();
+            timerLoadDelay.Start();
+        }
+
+        private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
+        {
+            timerLoadDelay.Stop();
+        }
+
+        private void timerTaskManager_Tick(object sender, EventArgs e)
+        {
+            if (taskList.Count > 0 && !webBrowser1.IsBusy)
+            {
+                if (taskList[0].IsCompleted)
+                {
+                    string decoded = System.Web.Helpers.Json.Decode(taskList[0].Result);
+                    GetDays(decoded);
+                    taskList.RemoveAt(0);
+                }
+            }
+        }
+
+        private void webView21_SourceChanged(object sender, Microsoft.Web.WebView2.Core.CoreWebView2SourceChangedEventArgs e)
+        {
+            if (webviewInitialized)
+                textBoxURL.Text = webView21.CoreWebView2.Source;
+        }
+
+        private void webView21_NavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs e)
+        {
+            if (checkBoxAutoRead.Checked)
+                ReadPage();
+        }
+
+        private void webView21_CoreWebView2InitializationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs e)
+        {
+            webviewInitialized = true;
+            Output("WebView2 initialized.");
+            if (Properties.Settings.Default.HomepageURL.Length > 0)
+                try
+                {
+                    webView21.CoreWebView2.Navigate(Properties.Settings.Default.HomepageURL);
+                }
+                catch { }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (textBoxURL.Text.Length > 0 && webviewInitialized)
+                try
+                {
+                    string url = textBoxURL.Text;
+                    if (!PassingURL(url)) url = $"http://{url}";
+                    webView21.CoreWebView2.Navigate(url);
+                }
+                catch { }
+        }
+
+        public bool PassingURL(string text)
+        {
+            string url = text.ToLower();
+            return url.StartsWith("http://") || url.StartsWith("https://");
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            GetDays(webBrowser1.Document);
+            ReadPage();
+        }
+
+        public void ReadPage()
+        {
+            if (webviewInitialized)
+            {
+                Output("Reading HTML in background.");
+                taskList.Add(webView21.CoreWebView2.ExecuteScriptAsync("document.body.outerHTML"));
+            }
         }
 
         public void AddDay(EmployeeDay day)
@@ -189,11 +285,29 @@ namespace Jamba_Tips
                     {
                         name = name.Substring(0, index).Trim();
                     }
-                }    
+                }
                 return true;
             }
             catch { Output("Unable to find employee name! This may not be the correct page."); }
             return false;
+        }
+
+        public void GetDays(string htmlText)
+        {
+            try
+            {
+                File.WriteAllText(HTMLFileLocation(), htmlText);
+                webBrowser1.Url = new Uri(String.Format("file:///{0}/temp.html", Directory.GetCurrentDirectory()));
+            }
+            catch { Output("Error getting days"); }
+        }
+
+        public string HTMLFileLocation()
+        {
+            string location = Application.ExecutablePath;
+            int index = location.LastIndexOf(Path.DirectorySeparatorChar);
+            location = location.Substring(0, index);
+            return Path.Combine(location, "temp.html");
         }
 
         public void GetDays(HtmlDocument document)
@@ -258,11 +372,6 @@ namespace Jamba_Tips
             }
             catch { }
             return false;
-        }
-
-        private void webBrowser1_Navigated(object sender, WebBrowserNavigatedEventArgs e)
-        {
-            textBoxURL.Text = webBrowser1.Url.ToString();
         }
 
         //Calculator tab
@@ -662,6 +771,7 @@ namespace Jamba_Tips
                 return $"{name}♠{hours}♠{day.Month}♠{day.Day}";
             }
         }
+
 
         public class EmployeeTotal
         {

@@ -1,11 +1,28 @@
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\runtimes\win-x86\native\WebView2Loader.dll
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\runtimes\win-x64\native\WebView2Loader.dll
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\runtimes\win-arm64\native\WebView2Loader.dll
 K:\repos\Jamba Tips\Jamba Tips\bin\Debug\Jamba Tips.exe.config
 K:\repos\Jamba Tips\Jamba Tips\bin\Debug\Jamba Tips.exe
 K:\repos\Jamba Tips\Jamba Tips\bin\Debug\Jamba Tips.pdb
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\Microsoft.Web.Infrastructure.dll
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\Microsoft.Web.WebView2.Core.dll
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\Microsoft.Web.WebView2.WinForms.dll
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\Microsoft.Web.WebView2.Wpf.dll
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\System.Web.Helpers.dll
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\System.Web.WebPages.dll
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\System.Web.WebPages.Deployment.dll
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\Microsoft.Web.WebView2.Core.xml
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\Microsoft.Web.WebView2.WinForms.xml
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\Microsoft.Web.WebView2.Wpf.xml
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\System.Web.Helpers.xml
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\System.Web.WebPages.xml
+K:\repos\Jamba Tips\Jamba Tips\bin\Debug\System.Web.WebPages.Deployment.xml
+K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.csproj.AssemblyReference.cache
+K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.csproj.SuggestedBindingRedirects.cache
 K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba_Tips.Form1.resources
 K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba_Tips.Properties.Resources.resources
 K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.csproj.GenerateResource.cache
 K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.csproj.CoreCompileInputs.cache
+K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.csproj.CopyComplete
 K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.exe
 K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.pdb
-K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.csproj.AssemblyReference.cache
-K:\repos\Jamba Tips\Jamba Tips\obj\Debug\Jamba Tips.csproj.SuggestedBindingRedirects.cache
