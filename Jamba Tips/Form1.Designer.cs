@@ -41,14 +41,15 @@ namespace Jamba_Tips
             this.listBoxDays = new System.Windows.Forms.ListBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.panelNavigation = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
+            this.buttonRead = new System.Windows.Forms.Button();
+            this.textBoxURL = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
             this.listBoxOutput = new System.Windows.Forms.ListBox();
             this.checkBoxAutoRead = new System.Windows.Forms.CheckBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.textBoxURL = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.labelTotalTips = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -71,16 +72,17 @@ namespace Jamba_Tips
             this.button4 = new System.Windows.Forms.Button();
             this.listBoxEmployees = new System.Windows.Forms.ListBox();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.button8 = new System.Windows.Forms.Button();
             this.checkBoxNormalizedNames = new System.Windows.Forms.CheckBox();
             this.button7 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.textBoxHomepage = new System.Windows.Forms.TextBox();
-            this.timerTaskManager = new System.Windows.Forms.Timer(this.components);
             this.timerLoadDelay = new System.Windows.Forms.Timer(this.components);
             tabPage4 = new System.Windows.Forms.TabPage();
             tabPage4.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.panelNavigation.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -200,17 +202,61 @@ namespace Jamba_Tips
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.panelNavigation);
             this.tabPage1.Controls.Add(this.splitContainer1);
             this.tabPage1.Controls.Add(this.checkBoxAutoRead);
-            this.tabPage1.Controls.Add(this.button2);
-            this.tabPage1.Controls.Add(this.button1);
-            this.tabPage1.Controls.Add(this.textBoxURL);
             this.tabPage1.Location = new System.Drawing.Point(4, 27);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(1073, 628);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Browser";
+            // 
+            // panelNavigation
+            // 
+            this.panelNavigation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelNavigation.Controls.Add(this.button1);
+            this.panelNavigation.Controls.Add(this.buttonRead);
+            this.panelNavigation.Controls.Add(this.textBoxURL);
+            this.panelNavigation.Location = new System.Drawing.Point(8, 3);
+            this.panelNavigation.Margin = new System.Windows.Forms.Padding(0);
+            this.panelNavigation.Name = "panelNavigation";
+            this.panelNavigation.Size = new System.Drawing.Size(958, 30);
+            this.panelNavigation.TabIndex = 7;
+            // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(799, 0);
+            this.button1.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 30);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "Go";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // buttonRead
+            // 
+            this.buttonRead.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonRead.Location = new System.Drawing.Point(880, 0);
+            this.buttonRead.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.buttonRead.Name = "buttonRead";
+            this.buttonRead.Size = new System.Drawing.Size(75, 30);
+            this.buttonRead.TabIndex = 3;
+            this.buttonRead.Text = "Read";
+            this.buttonRead.UseVisualStyleBackColor = true;
+            this.buttonRead.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // textBoxURL
+            // 
+            this.textBoxURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxURL.Location = new System.Drawing.Point(3, 3);
+            this.textBoxURL.Name = "textBoxURL";
+            this.textBoxURL.Size = new System.Drawing.Size(790, 24);
+            this.textBoxURL.TabIndex = 1;
             // 
             // splitContainer1
             // 
@@ -255,7 +301,7 @@ namespace Jamba_Tips
             this.webView21.Location = new System.Drawing.Point(0, 0);
             this.webView21.Name = "webView21";
             this.webView21.Size = new System.Drawing.Size(1057, 501);
-            this.webView21.Source = new System.Uri("http://www.google.com", System.UriKind.Absolute);
+            this.webView21.Source = new System.Uri("https://google.com", System.UriKind.Absolute);
             this.webView21.TabIndex = 1;
             this.webView21.ZoomFactor = 1D;
             this.webView21.CoreWebView2InitializationCompleted += new System.EventHandler<Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs>(this.webView21_CoreWebView2InitializationCompleted);
@@ -282,37 +328,6 @@ namespace Jamba_Tips
             this.checkBoxAutoRead.TabIndex = 4;
             this.checkBoxAutoRead.Text = "Auto Read";
             this.checkBoxAutoRead.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(888, 3);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 30);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Read";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // button1
-            // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(807, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 30);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Go";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // textBoxURL
-            // 
-            this.textBoxURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxURL.Location = new System.Drawing.Point(8, 6);
-            this.textBoxURL.Name = "textBoxURL";
-            this.textBoxURL.Size = new System.Drawing.Size(793, 24);
-            this.textBoxURL.TabIndex = 1;
             // 
             // tabPage2
             // 
@@ -539,6 +554,7 @@ namespace Jamba_Tips
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.button8);
             this.tabPage5.Controls.Add(this.checkBoxNormalizedNames);
             this.tabPage5.Controls.Add(this.button7);
             this.tabPage5.Controls.Add(this.label2);
@@ -549,6 +565,16 @@ namespace Jamba_Tips
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Settings";
             this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(8, 108);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(75, 30);
+            this.button8.TabIndex = 7;
+            this.button8.Text = "Debug";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // checkBoxNormalizedNames
             // 
@@ -588,12 +614,6 @@ namespace Jamba_Tips
             this.textBoxHomepage.TabIndex = 0;
             this.textBoxHomepage.TextChanged += new System.EventHandler(this.textBoxHomepage_TextChanged);
             // 
-            // timerTaskManager
-            // 
-            this.timerTaskManager.Enabled = true;
-            this.timerTaskManager.Interval = 500;
-            this.timerTaskManager.Tick += new System.EventHandler(this.timerTaskManager_Tick);
-            // 
             // timerLoadDelay
             // 
             this.timerLoadDelay.Interval = 500;
@@ -620,6 +640,8 @@ namespace Jamba_Tips
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            this.panelNavigation.ResumeLayout(false);
+            this.panelNavigation.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -646,7 +668,7 @@ namespace Jamba_Tips
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox textBoxURL;
         private System.Windows.Forms.CheckBox checkBoxAutoRead;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button buttonRead;
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.NumericUpDown numericUpDownTips;
@@ -682,9 +704,10 @@ namespace Jamba_Tips
         private System.Windows.Forms.CheckBox checkBoxNormalizedNames;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
-        private System.Windows.Forms.Timer timerTaskManager;
         private System.Windows.Forms.WebBrowser webBrowser1;
         private System.Windows.Forms.Timer timerLoadDelay;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Panel panelNavigation;
     }
 }
 

@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Threading;
 
 namespace Jamba_Tips
 {
@@ -22,9 +19,23 @@ namespace Jamba_Tips
 
         public List<string> blacklistedEmployees = new List<string>();
 
-        public bool loading = false, webviewInitialized = false;
+        public bool loading = false, webviewInitialized = false, readingPage = false, gettingEmployeeInfo = false, gettingTimesheet = false,
+                    navigatedHome = false;
 
-        public List<Task<string>> taskList = new List<Task<string>>();
+        public DebugForm debugForm;
+
+        public SortedList<string, Stopwatch> timerList = new SortedList<string, Stopwatch>();
+
+        public enum ReadStatus
+        {
+            Idle,
+            Reading,
+            Read
+        };
+
+        public ReadStatus readStatus = ReadStatus.Read;
+
+        public string empInfo = "", timesheet = "";
 
         //Main functions
 
@@ -36,6 +47,7 @@ namespace Jamba_Tips
         private void Form1_Load(object sender, EventArgs e)
         {
             loading = true;
+            SetReadStatus(ReadStatus.Read);
             if (Properties.Settings.Default.HomepageURL.Length > 0)
                 try
                 {
@@ -57,6 +69,7 @@ namespace Jamba_Tips
 
         public void SaveEmployees()
         {
+            Record("Saving Data");
             Output("Saving before close...");
             Properties.Settings.Default.EmployeeDays.Clear();
 
@@ -83,10 +96,12 @@ namespace Jamba_Tips
             }
 
             Properties.Settings.Default.Save();
+            Record("Saving Data", false);
         }
 
         public void LoadEmployees()
         {
+            Record("Loading Data");
             foreach (string str in Properties.Settings.Default.EmployeeDays)
             {
                 AddDay(new EmployeeDay(str));
@@ -98,6 +113,7 @@ namespace Jamba_Tips
                 args = str.Split('♠');
                 dailyTipValues[new DateTime(DateTime.Now.Year, int.Parse(args[1]), int.Parse(args[2]))] = double.Parse(args[0]);
             }
+            Record("Loading Data", false);
         }
 
         public double RoundMoney(double value)
@@ -133,9 +149,56 @@ namespace Jamba_Tips
 
         public void Output(string text)
         {
-            listBoxOutput.Items.Insert(0, $"{DateTime.Now.ToLongTimeString()} {text}");
-            if (listBoxOutput.Items.Count > 50)
-                listBoxOutput.Items.RemoveAt(50);
+            if (listBoxOutput.InvokeRequired)
+            {
+                Action safeWrite = delegate { Output(text); };
+                listBoxOutput.Invoke(safeWrite);
+            }
+            else
+            {
+                listBoxOutput.Items.Insert(0, $"{DateTime.Now.ToLongTimeString()} {text}");
+                if (listBoxOutput.Items.Count > 50)
+                    listBoxOutput.Items.RemoveAt(50);
+            }
+        }
+
+        public void LongOutput(string text)
+        {
+            if (debugForm != null)
+                debugForm.AddOutput(text);
+        }
+
+        public Color StatusColor()
+        {
+            switch (readStatus)
+            {
+                case ReadStatus.Idle:
+                    return Color.Green;
+                case ReadStatus.Reading:
+                    return Color.Yellow;
+                case ReadStatus.Read:
+                    return Color.Red;
+                default:
+                    return Color.Green;
+            }
+        }
+
+        public void Record(string key, bool start = true)
+        {
+            if (!start)
+            {
+                if (timerList.ContainsKey(key))
+                    timerList[key].Stop();
+            }
+            else if (!timerList.ContainsKey(key))
+            {
+                timerList[key] = new Stopwatch();
+                timerList[key].Start();
+            }
+            else
+            {
+                timerList[key].Restart();
+            }
         }
 
         //Browser tab
@@ -168,7 +231,7 @@ namespace Jamba_Tips
             timerLoadDelay.Stop();
             try
             {
-                GetDays(webBrowser1.Document);
+                ReadDocument(webBrowser1.Document);
                 Output("Reading complete.");
             }
             catch { Output("Error parsing document"); }
@@ -185,19 +248,6 @@ namespace Jamba_Tips
             timerLoadDelay.Stop();
         }
 
-        private void timerTaskManager_Tick(object sender, EventArgs e)
-        {
-            if (taskList.Count > 0 && !webBrowser1.IsBusy)
-            {
-                if (taskList[0].IsCompleted)
-                {
-                    string decoded = System.Web.Helpers.Json.Decode(taskList[0].Result);
-                    GetDays(decoded);
-                    taskList.RemoveAt(0);
-                }
-            }
-        }
-
         private void webView21_SourceChanged(object sender, Microsoft.Web.WebView2.Core.CoreWebView2SourceChangedEventArgs e)
         {
             if (webviewInitialized)
@@ -206,6 +256,18 @@ namespace Jamba_Tips
 
         private void webView21_NavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs e)
         {
+            if (!navigatedHome && webviewInitialized)
+            {
+                navigatedHome = true;
+                if (Properties.Settings.Default.HomepageURL.Length > 0)
+                    try
+                    {
+                        MainNavigation(Properties.Settings.Default.HomepageURL);
+                    }
+                    catch { }
+            }
+            if (readStatus == ReadStatus.Read)
+                SetReadStatus(ReadStatus.Idle);
             if (checkBoxAutoRead.Checked)
                 ReadPage();
         }
@@ -214,24 +276,25 @@ namespace Jamba_Tips
         {
             webviewInitialized = true;
             Output("WebView2 initialized.");
-            if (Properties.Settings.Default.HomepageURL.Length > 0)
-                try
-                {
-                    webView21.CoreWebView2.Navigate(Properties.Settings.Default.HomepageURL);
-                }
-                catch { }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (textBoxURL.Text.Length > 0 && webviewInitialized)
+            MainNavigation(textBoxURL.Text);
+        }
+
+        public void MainNavigation(string text)
+        {
+            if (text.Length > 0 && webviewInitialized)
+            {
                 try
                 {
-                    string url = textBoxURL.Text;
-                    if (!PassingURL(url)) url = $"http://{url}";
+                    string url = text;
+                    if (!PassingURL(url)) url = $"https://{url}";
                     webView21.CoreWebView2.Navigate(url);
                 }
                 catch { }
+            }
         }
 
         public bool PassingURL(string text)
@@ -247,73 +310,110 @@ namespace Jamba_Tips
 
         public void ReadPage()
         {
-            if (webviewInitialized)
+            if (webviewInitialized && !readingPage)
             {
+                Record("Starting Task");
+                readingPage = true;
+                SetReadStatus(ReadStatus.Reading);
                 Output("Reading HTML in background.");
-                taskList.Add(webView21.CoreWebView2.ExecuteScriptAsync("document.body.outerHTML"));
+                //webView21.CoreWebView2.ExecuteScriptAsync("document.body.outerHTML").ContinueWith(FinalizeTask);
+                webView21.CoreWebView2.ExecuteScriptAsync("document.getElementById(\"tbltimesheet\").outerHTML").ContinueWith(FinalizeTimesheet);
+                webView21.CoreWebView2.ExecuteScriptAsync("document.getElementById(\"empInfo\").outerHTML").ContinueWith(FinalizeEmployeeInfo);
+                gettingEmployeeInfo = true;
+                gettingTimesheet = true;
+                Record("Starting Task", false);
             }
         }
 
-        public void AddDay(EmployeeDay day)
+        public void FinalizeTimesheet(Task<string> task)
         {
-            if (!employeeTotalList.ContainsKey(day.name))
-                employeeTotalList[day.name] = new EmployeeTotal();
-
-            if (!loading)
+            try
             {
-                if (!employeeTotalList[day.name].employeeDays.ContainsKey(day.day))
+                if (task.Result != null && task.Result.Length > 0)
                 {
-                    Output($"Added record for {day.name} with {day.hours} hours on {day.day.Month}/{day.day.Day}");
+                    string decoded = System.Web.Helpers.Json.Decode<string>(task.Result);
+                    timesheet = decoded;
+                    gettingTimesheet = false;
+                    if (!gettingEmployeeInfo)
+                        GenerateLocalDocument($"{empInfo}{Environment.NewLine}{timesheet}");
                 }
                 else
                 {
-                    Output($"Updated record for {day.name} with {day.hours} hours on {day.day.Month}/{day.day.Day}");
+                    LongOutput("Decoded JSON was blank.");
                 }
             }
-            employeeTotalList[day.name].employeeDays[day.day] = new EmployeeDay(day);
+            catch { LongOutput("Error caught decoding JSON."); }
         }
 
-        public bool GetName(HtmlDocument document, ref string name)
+        public void FinalizeEmployeeInfo(Task<string> task)
         {
             try
             {
-                name = document.GetElementById("empInfo").Children[1].Children[1].Children[0].Children[0].Children[0].Children[0].InnerText;
-                if (Properties.Settings.Default.NormalizedNames)
+                if (task.Result != null && task.Result.Length > 0)
                 {
-                    int index = name.IndexOf("(");
-                    if (index > 0)
-                    {
-                        name = name.Substring(0, index).Trim();
-                    }
+                    string decoded = System.Web.Helpers.Json.Decode<string>(task.Result);
+                    empInfo = decoded;
+                    gettingEmployeeInfo = false;
+                    if (!gettingTimesheet)
+                        GenerateLocalDocument($"{empInfo}{Environment.NewLine}{timesheet}");
                 }
-                return true;
+                else
+                {
+                    LongOutput("Decoded JSON was blank.");
+                }
             }
-            catch { Output("Unable to find employee name! This may not be the correct page."); }
-            return false;
+            catch { LongOutput("Error caught decoding JSON."); }
         }
 
-        public void GetDays(string htmlText)
+        public void GenerateLocalDocument(string htmlText)
         {
             try
             {
-                File.WriteAllText(HTMLFileLocation(), htmlText);
-                webBrowser1.Url = new Uri(String.Format("file:///{0}/temp.html", Directory.GetCurrentDirectory()));
+                Record("Generating File");
+                Stream fileStream = File.Create(HTMLFileLocation());
+                StreamWriter writer = new StreamWriter(fileStream);
+                writer.AutoFlush = true;
+                StringBuilder builder = new StringBuilder();
+                builder.AppendLine("<!DOCTYPE html>");
+                builder.AppendLine("<html lang=\"en\">");
+                builder.AppendLine("<head>");
+                builder.AppendLine("    <meta charset=\"UTF - 8\">");
+                builder.AppendLine("    <meta http-equiv=\"X - UA - Compatible\" content=\"IE = edge\">");
+                builder.AppendLine("    <meta name=\"viewport\" content=\"width = device - width, initial - scale = 1.0\">");
+                builder.AppendLine("    <title>Document</title>");
+                builder.AppendLine("</head>");
+                builder.AppendLine("<body>");
+                builder.AppendLine(htmlText);
+                builder.AppendLine("</body>");
+                builder.AppendLine("</html>");
+                writer.Write(builder.ToString());
+                writer.Close();
+                NavigateSubBrowser(String.Format("file:///{0}/temp.html", Directory.GetCurrentDirectory()));
+                empInfo = "";
+                timesheet = "";
+                Record("Generating File", false);
             }
             catch { Output("Error getting days"); }
         }
 
-        public string HTMLFileLocation()
+        public void NavigateSubBrowser(string url)
         {
-            string location = Application.ExecutablePath;
-            int index = location.LastIndexOf(Path.DirectorySeparatorChar);
-            location = location.Substring(0, index);
-            return Path.Combine(location, "temp.html");
+            if (webBrowser1.InvokeRequired)
+            {
+                Action safeNav = delegate { NavigateSubBrowser(url); };
+                webBrowser1.Invoke(safeNav);
+            }
+            else
+            {
+                webBrowser1.Url = new Uri(url);
+            }
         }
 
-        public void GetDays(HtmlDocument document)
+        public void ReadDocument(HtmlDocument document)
         {
             try
             {
+                Record("Reading Document");
                 HtmlElement timesheetElement = document.GetElementById("tbltimesheet");
                 if (timesheetElement != null)
                 {
@@ -341,18 +441,33 @@ namespace Jamba_Tips
                         catch { }
                     }
                 }
+                Record("Reading Document", false);
             }
-            catch { Output("Unable to get information! This may not be the correct page."); }
+            catch
+            {
+                Output("Unable to get information! This may not be the correct page.");
+                Record("Reading Document", false);
+            }
+            SetReadStatus(ReadStatus.Read);
+            readingPage = false;
         }
 
-        public bool GetHours(HtmlDocument document, int day, ref double hours)
+        public bool GetName(HtmlDocument document, ref string name)
         {
             try
             {
-                hours = double.Parse(document.GetElementById("tbltimesheet").Children[1].Children[day].Children[8].Children[0].Children[0].InnerText);
+                name = document.GetElementById("empInfo").Children[1].Children[1].Children[0].Children[0].Children[0].Children[0].InnerText;
+                if (Properties.Settings.Default.NormalizedNames)
+                {
+                    int index = name.IndexOf("(");
+                    if (index > 0)
+                    {
+                        name = name.Substring(0, index).Trim();
+                    }
+                }
                 return true;
             }
-            catch { }
+            catch { Output("Unable to find employee name! This may not be the correct page."); }
             return false;
         }
 
@@ -372,6 +487,50 @@ namespace Jamba_Tips
             }
             catch { }
             return false;
+        }
+
+        public bool GetHours(HtmlDocument document, int day, ref double hours)
+        {
+            try
+            {
+                hours = double.Parse(document.GetElementById("tbltimesheet").Children[1].Children[day].Children[8].Children[0].Children[0].InnerText);
+                return true;
+            }
+            catch { }
+            return false;
+        }
+
+        public void AddDay(EmployeeDay day)
+        {
+            if (!employeeTotalList.ContainsKey(day.name))
+                employeeTotalList[day.name] = new EmployeeTotal();
+
+            if (!loading)
+            {
+                if (!employeeTotalList[day.name].employeeDays.ContainsKey(day.day))
+                {
+                    Output($"Added record for {day.name} with {day.hours} hours on {day.day.Month}/{day.day.Day}");
+                }
+                else
+                {
+                    Output($"Updated record for {day.name} with {day.hours} hours on {day.day.Month}/{day.day.Day}");
+                }
+            }
+            employeeTotalList[day.name].employeeDays[day.day] = new EmployeeDay(day);
+        }
+
+        public string HTMLFileLocation()
+        {
+            string location = Application.ExecutablePath;
+            int index = location.LastIndexOf(Path.DirectorySeparatorChar);
+            location = location.Substring(0, index);
+            return Path.Combine(location, "temp.html");
+        }
+
+        public void SetReadStatus(ReadStatus status)
+        {
+            readStatus = status;
+            panelNavigation.BackColor = StatusColor();
         }
 
         //Calculator tab
@@ -741,6 +900,27 @@ namespace Jamba_Tips
             }
         }
 
+        private void button8_Click(object sender, EventArgs e)
+        {
+            if (debugForm == null)
+            {
+                debugForm = new DebugForm();
+                debugForm.parent = this;
+                debugForm.FormClosed += DebugFormClosed;
+                debugForm.Show();
+            }
+            else debugForm.Show();
+        }
+
+        private void DebugFormClosed(object sender, FormClosedEventArgs e)
+        {
+            try
+            {
+                debugForm = null;
+            }
+            catch { }
+        }
+
         //Classes
 
         public class EmployeeDay
@@ -774,7 +954,6 @@ namespace Jamba_Tips
                 return $"{name}♠{hours}♠{day.Month}♠{day.Day}";
             }
         }
-
 
         public class EmployeeTotal
         {
