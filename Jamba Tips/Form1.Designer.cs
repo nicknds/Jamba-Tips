@@ -51,6 +51,9 @@ namespace Jamba_Tips
             this.listBoxOutput = new System.Windows.Forms.ListBox();
             this.checkBoxAutoRead = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.labelDateRange = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.numericUpDownDays = new System.Windows.Forms.NumericUpDown();
             this.labelTotalTips = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.labelHourTotal = new System.Windows.Forms.Label();
@@ -78,6 +81,10 @@ namespace Jamba_Tips
             this.label2 = new System.Windows.Forms.Label();
             this.textBoxHomepage = new System.Windows.Forms.TextBox();
             this.timerLoadDelay = new System.Windows.Forms.Timer(this.components);
+            this.tabControl2 = new System.Windows.Forms.TabControl();
+            this.tabPageTables = new System.Windows.Forms.TabPage();
+            this.tabPageText = new System.Windows.Forms.TabPage();
+            this.richTextBoxOutput = new System.Windows.Forms.RichTextBox();
             tabPage4 = new System.Windows.Forms.TabPage();
             tabPage4.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -89,11 +96,15 @@ namespace Jamba_Tips
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.webView21)).BeginInit();
             this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDays)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTips)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage5.SuspendLayout();
+            this.tabControl2.SuspendLayout();
+            this.tabPageTables.SuspendLayout();
+            this.tabPageText.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabPage4
@@ -331,11 +342,14 @@ namespace Jamba_Tips
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.tabControl2);
+            this.tabPage2.Controls.Add(this.labelDateRange);
+            this.tabPage2.Controls.Add(this.label3);
+            this.tabPage2.Controls.Add(this.numericUpDownDays);
             this.tabPage2.Controls.Add(this.labelTotalTips);
             this.tabPage2.Controls.Add(this.label1);
             this.tabPage2.Controls.Add(this.labelHourTotal);
             this.tabPage2.Controls.Add(this.numericUpDownTips);
-            this.tabPage2.Controls.Add(this.dataGridView1);
             this.tabPage2.Controls.Add(this.dateTimePicker1);
             this.tabPage2.Location = new System.Drawing.Point(4, 27);
             this.tabPage2.Name = "tabPage2";
@@ -345,31 +359,73 @@ namespace Jamba_Tips
             this.tabPage2.Text = "Calculator";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // labelDateRange
+            // 
+            this.labelDateRange.AutoSize = true;
+            this.labelDateRange.Location = new System.Drawing.Point(316, 11);
+            this.labelDateRange.Name = "labelDateRange";
+            this.labelDateRange.Size = new System.Drawing.Size(59, 18);
+            this.labelDateRange.TabIndex = 9;
+            this.labelDateRange.Text = "Range: ";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            this.label3.Location = new System.Drawing.Point(316, 38);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(107, 18);
+            this.label3.TabIndex = 8;
+            this.label3.Text = "Calculate Days";
+            // 
+            // numericUpDownDays
+            // 
+            this.numericUpDownDays.Location = new System.Drawing.Point(429, 36);
+            this.numericUpDownDays.Maximum = new decimal(new int[] {
+            365,
+            0,
+            0,
+            0});
+            this.numericUpDownDays.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownDays.Name = "numericUpDownDays";
+            this.numericUpDownDays.Size = new System.Drawing.Size(101, 24);
+            this.numericUpDownDays.TabIndex = 7;
+            this.numericUpDownDays.Value = new decimal(new int[] {
+            7,
+            0,
+            0,
+            0});
+            this.numericUpDownDays.ValueChanged += new System.EventHandler(this.numericUpDownDays_ValueChanged);
+            // 
             // labelTotalTips
             // 
             this.labelTotalTips.AutoSize = true;
             this.labelTotalTips.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
-            this.labelTotalTips.Location = new System.Drawing.Point(316, 38);
+            this.labelTotalTips.Location = new System.Drawing.Point(614, 38);
             this.labelTotalTips.Name = "labelTotalTips";
-            this.labelTotalTips.Size = new System.Drawing.Size(117, 18);
+            this.labelTotalTips.Size = new System.Drawing.Size(140, 18);
             this.labelTotalTips.TabIndex = 6;
-            this.labelTotalTips.Text = "Total Tips: $0.00";
+            this.labelTotalTips.Text = "Counted Tips: $0.00";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
-            this.label1.Location = new System.Drawing.Point(8, 38);
+            this.label1.Location = new System.Drawing.Point(7, 38);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(72, 18);
+            this.label1.Size = new System.Drawing.Size(73, 18);
             this.label1.TabIndex = 5;
-            this.label1.Text = "Daily Tips";
+            this.label1.Text = "Total Tips";
             // 
             // labelHourTotal
             // 
             this.labelHourTotal.AutoSize = true;
             this.labelHourTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
-            this.labelHourTotal.Location = new System.Drawing.Point(316, 11);
+            this.labelHourTotal.Location = new System.Drawing.Point(614, 11);
             this.labelHourTotal.Name = "labelHourTotal";
             this.labelHourTotal.Size = new System.Drawing.Size(102, 18);
             this.labelHourTotal.TabIndex = 4;
@@ -395,9 +451,6 @@ namespace Jamba_Tips
             // 
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.columnName,
@@ -405,10 +458,11 @@ namespace Jamba_Tips
             this.columnPercentage,
             this.columnTipAllotment});
             this.dataGridView1.ContextMenuStrip = this.contextMenuStrip1;
-            this.dataGridView1.Location = new System.Drawing.Point(8, 66);
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(1057, 554);
+            this.dataGridView1.Size = new System.Drawing.Size(1059, 528);
             this.dataGridView1.TabIndex = 2;
             // 
             // columnName
@@ -619,6 +673,52 @@ namespace Jamba_Tips
             this.timerLoadDelay.Interval = 500;
             this.timerLoadDelay.Tick += new System.EventHandler(this.timerLoadDelay_Tick);
             // 
+            // tabControl2
+            // 
+            this.tabControl2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl2.Controls.Add(this.tabPageTables);
+            this.tabControl2.Controls.Add(this.tabPageText);
+            this.tabControl2.Location = new System.Drawing.Point(0, 63);
+            this.tabControl2.Margin = new System.Windows.Forms.Padding(0);
+            this.tabControl2.Name = "tabControl2";
+            this.tabControl2.SelectedIndex = 0;
+            this.tabControl2.Size = new System.Drawing.Size(1073, 565);
+            this.tabControl2.TabIndex = 10;
+            // 
+            // tabPageTables
+            // 
+            this.tabPageTables.Controls.Add(this.dataGridView1);
+            this.tabPageTables.Location = new System.Drawing.Point(4, 27);
+            this.tabPageTables.Name = "tabPageTables";
+            this.tabPageTables.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageTables.Size = new System.Drawing.Size(1065, 534);
+            this.tabPageTables.TabIndex = 0;
+            this.tabPageTables.Text = "Table";
+            this.tabPageTables.UseVisualStyleBackColor = true;
+            // 
+            // tabPageText
+            // 
+            this.tabPageText.Controls.Add(this.richTextBoxOutput);
+            this.tabPageText.Location = new System.Drawing.Point(4, 27);
+            this.tabPageText.Name = "tabPageText";
+            this.tabPageText.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageText.Size = new System.Drawing.Size(1065, 534);
+            this.tabPageText.TabIndex = 1;
+            this.tabPageText.Text = "Text";
+            this.tabPageText.UseVisualStyleBackColor = true;
+            // 
+            // richTextBoxOutput
+            // 
+            this.richTextBoxOutput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBoxOutput.Location = new System.Drawing.Point(3, 3);
+            this.richTextBoxOutput.Name = "richTextBoxOutput";
+            this.richTextBoxOutput.ReadOnly = true;
+            this.richTextBoxOutput.Size = new System.Drawing.Size(1059, 528);
+            this.richTextBoxOutput.TabIndex = 0;
+            this.richTextBoxOutput.Text = "";
+            // 
             // Form1
             // 
             this.AcceptButton = this.button1;
@@ -649,6 +749,7 @@ namespace Jamba_Tips
             ((System.ComponentModel.ISupportInitialize)(this.webView21)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDays)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTips)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
@@ -656,6 +757,9 @@ namespace Jamba_Tips
             this.tabPage3.PerformLayout();
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
+            this.tabControl2.ResumeLayout(false);
+            this.tabPageTables.ResumeLayout(false);
+            this.tabPageText.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -708,6 +812,13 @@ namespace Jamba_Tips
         private System.Windows.Forms.Timer timerLoadDelay;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Panel panelNavigation;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.NumericUpDown numericUpDownDays;
+        private System.Windows.Forms.Label labelDateRange;
+        private System.Windows.Forms.TabControl tabControl2;
+        private System.Windows.Forms.TabPage tabPageTables;
+        private System.Windows.Forms.TabPage tabPageText;
+        private System.Windows.Forms.RichTextBox richTextBoxOutput;
     }
 }
 

@@ -82,5 +82,24 @@ namespace Jamba_Tips
 
             return builder.ToString();
         }
+
+        private void buttonTestEmployees_Click(object sender, EventArgs e)
+        {
+            Random rnd = new Random();
+            for (int i = 1; i <= 25; i++)
+            {
+                for (int d = 0; d < 14; d++)
+                {
+                    if (rnd.Next(1, 10) >= 4)
+                    {
+                        Form1.EmployeeDay employeeDay = new Form1.EmployeeDay();
+                        employeeDay.name = $"Test, Employee ({i})";
+                        employeeDay.hours = parent.RoundMoney(Math.Max(2.0, rnd.NextDouble() * 8.0));
+                        employeeDay.day = parent.RoundTime(DateTime.Now.AddDays(d));
+                        parent.AddDay(employeeDay);
+                    }
+                }
+            }
+        }
     }
 }

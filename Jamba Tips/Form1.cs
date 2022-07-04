@@ -26,6 +26,8 @@ namespace Jamba_Tips
 
         public SortedList<string, Stopwatch> timerList = new SortedList<string, Stopwatch>();
 
+        public string[] monthsInYear = new string[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+
         public enum ReadStatus
         {
             Idle,
@@ -540,20 +542,25 @@ namespace Jamba_Tips
             CalculateCurrentDate();
         }
 
-        public void CalculateDate(DateTime dateTime)
+        public void CalculateDate(DateTime dateTime, TimeSpan timeSpanLength)
         {
-            DateTime key = RoundTime(dateTime);
-
             SortedList<string, EmployeeDay> currentDay = new SortedList<string, EmployeeDay>();
 
             double totalHours = 0, percentage, allottedTips = 0, tips = (double)numericUpDownTips.Value, remainder = 0;
 
             foreach (KeyValuePair<string, EmployeeTotal> kvpA in employeeTotalList)
             {
-                if (kvpA.Value.employeeDays.ContainsKey(key) && !blacklistedEmployees.Contains(kvpA.Key))
+                for (int i = 0; i < timeSpanLength.Days; i++)
                 {
-                    currentDay[kvpA.Key] = new EmployeeDay(kvpA.Value.employeeDays[key]);
-                    totalHours += currentDay[kvpA.Key].hours;
+                    DateTime key = RoundTime(dateTime.AddDays(i));
+                    if (kvpA.Value.employeeDays.ContainsKey(key) && !blacklistedEmployees.Contains(kvpA.Key))
+                    {
+                        if (!currentDay.ContainsKey(kvpA.Key))
+                            currentDay[kvpA.Key] = new EmployeeDay(kvpA.Value.employeeDays[key]);
+                        else
+                            currentDay[kvpA.Key].hours += kvpA.Value.employeeDays[key].hours;
+                        totalHours += kvpA.Value.employeeDays[key].hours;
+                    }
                 }
             }
 
@@ -587,14 +594,20 @@ namespace Jamba_Tips
                 }
             }
 
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine($"Total Hours: {totalHours.ToString("N4").PadRight(12)}");
+            builder.AppendLine($"Input Tips: {tips.ToString("N2").PadRight(12)}");
+            builder.AppendLine($"Allocated Tips: {allottedTips.ToString("N2").PadRight(12)}{Environment.NewLine}");
             foreach (KeyValuePair<string, EmployeeDay> kvpA in currentDay)
             {
                 percentage = kvpA.Value.hours / totalHours;
-                dataGridView1.Rows.Add(new string[] { kvpA.Key, kvpA.Value.hours.ToString("N4"), $"{(percentage * 100.0).ToString("N4")}%", $"${kvpA.Value.calculatedTips}" });
+                dataGridView1.Rows.Add(new string[] { kvpA.Key, kvpA.Value.hours.ToString("N4"), $"{(percentage * 100.0).ToString("N4")}%", $"${kvpA.Value.calculatedTips.ToString("N2")}" });
+                builder.AppendLine($"{kvpA.Key.PadRight(35)} {kvpA.Value.hours.ToString("N4").PadRight(12)} {((percentage * 100.0).ToString("N4") + "%").PadRight(12)} ${kvpA.Value.calculatedTips.ToString("N2")}");
             }
 
+            richTextBoxOutput.Text = builder.ToString().Trim();
             labelHourTotal.Text = $"Total Hours: {totalHours.ToString("N4")}";
-            labelTotalTips.Text = $"Total Tips: ${allottedTips.ToString("N2")}";
+            labelTotalTips.Text = $"Counted Tips: ${allottedTips.ToString("N2")}";
         }
 
         private void numericUpDownTips_ValueChanged(object sender, EventArgs e)
@@ -610,14 +623,17 @@ namespace Jamba_Tips
         public void CalculateCurrentDate()
         {
             loading = true;
-            DateTime key = RoundTime(dateTimePicker1.Value);
+            DateTime key = RoundTime(dateTimePicker1.Value), endRange;
+            endRange = key.AddDays((int)numericUpDownDays.Value - 1);
             if (dailyTipValues.ContainsKey(key))
                 numericUpDownTips.Value = (decimal)dailyTipValues[key];
             else
                 numericUpDownTips.Value = 0;
+            labelDateRange.Text = $"Range: {endRange.DayOfWeek}, {monthsInYear[endRange.Month - 1]} {endRange.Day}, {endRange.Year}";
+
             loading = false;
 
-            CalculateDate(dateTimePicker1.Value);
+            CalculateDate(dateTimePicker1.Value, TimeSpan.FromDays((int)numericUpDownDays.Value));
         }
 
         public void RemoveDay(EmployeeDay day)
@@ -882,6 +898,11 @@ namespace Jamba_Tips
                 Properties.Settings.Default.HomepageURL = textBoxHomepage.Text;
                 Properties.Settings.Default.Save();
             }
+        }
+
+        private void numericUpDownDays_ValueChanged(object sender, EventArgs e)
+        {
+            CalculateCurrentDate();
         }
 
         private void button7_Click(object sender, EventArgs e)
