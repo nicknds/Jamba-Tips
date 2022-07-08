@@ -94,7 +94,7 @@ namespace Jamba_Tips
                     {
                         Form1.EmployeeDay employeeDay = new Form1.EmployeeDay();
                         employeeDay.name = $"Test, Employee ({i})";
-                        employeeDay.hours = parent.RoundMoney(Math.Max(2.0, rnd.NextDouble() * 8.0));
+                        employeeDay.hours = parent.RoundMoney((decimal)Math.Max(2.0, rnd.NextDouble() * 8.0));
                         employeeDay.day = parent.RoundTime(DateTime.Now.AddDays(d));
                         parent.AddDay(employeeDay);
                     }

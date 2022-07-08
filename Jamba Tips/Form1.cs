@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,7 +16,7 @@ namespace Jamba_Tips
 
         public SortedList<string, EmployeeTotal> employeeTotalList = new SortedList<string, EmployeeTotal>();
 
-        public SortedList<DateTime, double> dailyTipValues = new SortedList<DateTime, double>();
+        public SortedList<DateTime, SortedList<int, decimal>> dailyTipValues = new SortedList<DateTime, SortedList<int, decimal>>();
 
         public List<string> blacklistedEmployees = new List<string>();
 
@@ -85,9 +86,10 @@ namespace Jamba_Tips
 
             Properties.Settings.Default.DailyTips.Clear();
 
-            foreach (KeyValuePair<DateTime, double> kvpA in dailyTipValues)
+            foreach (KeyValuePair<DateTime, SortedList<int, decimal>> kvpA in dailyTipValues)
             {
-                Properties.Settings.Default.DailyTips.Add($"{kvpA.Value}♠{kvpA.Key.Month}♠{kvpA.Key.Day}♠");
+                foreach (KeyValuePair<int, decimal> kvpB in kvpA.Value)
+                    Properties.Settings.Default.DailyTips.Add($"{kvpB.Value}♠{kvpA.Key.Month}♠{kvpA.Key.Day}♠{kvpB.Key}");
             }
 
             Properties.Settings.Default.BlacklistedEmployees.Clear();
@@ -110,17 +112,24 @@ namespace Jamba_Tips
             }
 
             string[] args;
+            DateTime key;
+            int dayKey;
             foreach (string str in Properties.Settings.Default.DailyTips)
             {
                 args = str.Split('♠');
-                dailyTipValues[new DateTime(DateTime.Now.Year, int.Parse(args[1]), int.Parse(args[2]))] = double.Parse(args[0]);
+                key = new DateTime(DateTime.Now.Year, int.Parse(args[1]), int.Parse(args[2]));
+                if (args.Length < 4 || args[3].Length == 0 || !int.TryParse(args[3], out dayKey))
+                    dayKey = 7;
+                if (!dailyTipValues.ContainsKey(key))
+                    dailyTipValues[key] = new SortedList<int, decimal>();
+                dailyTipValues[key][dayKey] = decimal.Parse(args[0]);
             }
             Record("Loading Data", false);
         }
 
-        public double RoundMoney(double value)
+        public decimal RoundMoney(decimal value)
         {
-            return Math.Floor(value * 100.0) / 100.0;
+            return Math.Floor(value * 100.0m) / 100.0m;
         }
 
         public DateTime RoundTime(DateTime time)
@@ -427,13 +436,13 @@ namespace Jamba_Tips
 
                     DateTime day = DateTime.Now;
 
-                    double hours = 0;
+                    decimal hours = 0;
 
                     for (int i = 0; i < rows.Count; i++)
                     {
                         try
                         {
-                            if (GetDate(document, i, ref day) && GetHours(document, i, ref hours) && hours > 0.0)
+                            if (GetDate(document, i, ref day) && GetHours(document, i, ref hours) && hours > 0.0m)
                             {
                                 EmployeeDay employeeDay = new EmployeeDay { day = day, hours = hours, name = name };
                                 AddDay(employeeDay);
@@ -491,11 +500,11 @@ namespace Jamba_Tips
             return false;
         }
 
-        public bool GetHours(HtmlDocument document, int day, ref double hours)
+        public bool GetHours(HtmlDocument document, int day, ref decimal hours)
         {
             try
             {
-                hours = double.Parse(document.GetElementById("tbltimesheet").Children[1].Children[day].Children[8].Children[0].Children[0].InnerText);
+                hours = decimal.Parse(document.GetElementById("tbltimesheet").Children[1].Children[day].Children[8].Children[0].Children[0].InnerText);
                 return true;
             }
             catch { }
@@ -542,11 +551,45 @@ namespace Jamba_Tips
             CalculateCurrentDate();
         }
 
+        public void BalanceTips(ref decimal allocatedTips, ref SortedList<string, EmployeeDay> currentDay, decimal desiredTips)
+        {
+            if (allocatedTips == desiredTips)
+                return;
+
+            List<EmployeeDay> sortedDays = new List<EmployeeDay>();
+            foreach (KeyValuePair<string, EmployeeDay> kvpA in currentDay)
+                sortedDays.Add(new EmployeeDay(kvpA.Value));
+            sortedDays = sortedDays.OrderByDescending(x => x.hours).ToList();
+
+            if (allocatedTips > desiredTips)
+            {
+                for (int i = 0; i < sortedDays.Count; i++)
+                {
+                    currentDay[sortedDays[i].name].calculatedTips -= 0.01m;
+                    allocatedTips -= 0.01m;
+                    if (allocatedTips <= desiredTips)
+                        break;
+                }
+            }
+            else if (allocatedTips < desiredTips)
+            {
+                for (int i = 0; i < sortedDays.Count; i++)
+                {
+                    currentDay[sortedDays[i].name].calculatedTips += 0.01m;
+                    allocatedTips += 0.01m;
+                    if (allocatedTips >= desiredTips)
+                        break;
+                }
+            }
+        }
+
         public void CalculateDate(DateTime dateTime, TimeSpan timeSpanLength)
         {
             SortedList<string, EmployeeDay> currentDay = new SortedList<string, EmployeeDay>();
+            Dictionary<string, string> employeeSubInfo = new Dictionary<string, string>();
+            StringBuilder builder = new StringBuilder(), postBuilder = new StringBuilder();
 
-            double totalHours = 0, percentage, allottedTips = 0, tips = (double)numericUpDownTips.Value, remainder = 0;
+            decimal totalHours = 0, percentage, allocatedTips = 0, tips = (decimal)numericUpDownTips.Value, remainder = 0;
 
             foreach (KeyValuePair<string, EmployeeTotal> kvpA in employeeTotalList)
             {
@@ -560,8 +603,13 @@ namespace Jamba_Tips
                         else
                             currentDay[kvpA.Key].hours += kvpA.Value.employeeDays[key].hours;
                         totalHours += kvpA.Value.employeeDays[key].hours;
+                        if (postBuilder.Length > 0)
+                            postBuilder.Append(", ");
+                        postBuilder.Append($"{key.Month}/{key.Day} {kvpA.Value.employeeDays[key].hours.ToString("N2")}");
                     }
                 }
+                employeeSubInfo[kvpA.Key] = postBuilder.ToString();
+                postBuilder.Clear();
             }
 
             dataGridView1.Rows.Clear();
@@ -572,51 +620,65 @@ namespace Jamba_Tips
                 kvpA.Value.calculatedTips = percentage * tips;
                 remainder += kvpA.Value.calculatedTips - RoundMoney(kvpA.Value.calculatedTips);
                 kvpA.Value.calculatedTips = RoundMoney(kvpA.Value.calculatedTips);
-                allottedTips += kvpA.Value.calculatedTips;
+                allocatedTips += kvpA.Value.calculatedTips;
             }
 
-            if (allottedTips < tips)
+            if (allocatedTips != tips)
             {
-                string highestEmployee = "";
-                double highestHours = 0;
-                foreach (KeyValuePair<string, EmployeeDay> kvpA in currentDay)
+                if (allocatedTips < tips)
                 {
-                    if (kvpA.Value.hours > highestHours)
-                    {
-                        highestEmployee = kvpA.Key;
-                        highestHours = kvpA.Value.hours;
-                    }
+                    LongOutput($"Allocated tips (${allocatedTips.ToString("N2")}) are below tips (${tips.ToString("N2")})");
+                    LongOutput($"Allocating extra tips (${remainder.ToString("N2")})");
                 }
-                if (highestEmployee.Length > 0)
+                else if (allocatedTips > tips)
                 {
-                    currentDay[highestEmployee].calculatedTips += remainder;
-                    allottedTips += remainder;
+                    LongOutput($"Allocated tips (${allocatedTips.ToString("N2")}) are above tips (${tips.ToString("N2")})");
+                    LongOutput($"Removing extra tips (${remainder.ToString("N2")})");
                 }
+                BalanceTips(ref allocatedTips, ref currentDay, tips);
+            }
+            else
+            {
+                LongOutput($"Allocated tips (${allocatedTips.ToString("N2")}) are equal to given tips (${tips.ToString("N2")})");
             }
 
-            StringBuilder builder = new StringBuilder();
             builder.AppendLine($"Total Hours: {totalHours.ToString("N4").PadRight(12)}");
             builder.AppendLine($"Input Tips: {tips.ToString("N2").PadRight(12)}");
-            builder.AppendLine($"Allocated Tips: {allottedTips.ToString("N2").PadRight(12)}{Environment.NewLine}");
+            builder.AppendLine($"Allocated Tips: {allocatedTips.ToString("N2").PadRight(12)}");
+            builder.AppendLine($"Date Range: {dateTime.ToShortDateString()} - {dateTime.AddDays(timeSpanLength.Days - 1).ToShortDateString()}{Environment.NewLine}");
+
             foreach (KeyValuePair<string, EmployeeDay> kvpA in currentDay)
             {
                 percentage = kvpA.Value.hours / totalHours;
-                dataGridView1.Rows.Add(new string[] { kvpA.Key, kvpA.Value.hours.ToString("N4"), $"{(percentage * 100.0).ToString("N4")}%", $"${kvpA.Value.calculatedTips.ToString("N2")}" });
-                builder.AppendLine($"{kvpA.Key.PadRight(35)} {kvpA.Value.hours.ToString("N4").PadRight(12)} {((percentage * 100.0).ToString("N4") + "%").PadRight(12)} ${kvpA.Value.calculatedTips.ToString("N2")}");
+                dataGridView1.Rows.Add(new string[] { kvpA.Key, kvpA.Value.hours.ToString("N4"), $"${kvpA.Value.calculatedTips.ToString("N2")}" });
+                builder.AppendLine($"{kvpA.Key.PadRight(35)} {kvpA.Value.hours.ToString("N4").PadRight(12)} ${kvpA.Value.calculatedTips.ToString("N2")}");
+                builder.AppendLine($"    {employeeSubInfo[kvpA.Key]}");
             }
 
             richTextBoxOutput.Text = builder.ToString().Trim();
             labelHourTotal.Text = $"Total Hours: {totalHours.ToString("N4")}";
-            labelTotalTips.Text = $"Counted Tips: ${allottedTips.ToString("N2")}";
+            labelTotalTips.Text = $"Counted Tips: ${allocatedTips.ToString("N2")}";
         }
 
         private void numericUpDownTips_ValueChanged(object sender, EventArgs e)
         {
+            DateTime key = RoundTime(dateTimePicker1.Value);
             if (numericUpDownTips.Value > 0m)
             {
-                dailyTipValues[RoundTime(dateTimePicker1.Value)] = (double)numericUpDownTips.Value;
+                if (!dailyTipValues.ContainsKey(key))
+                    dailyTipValues[key] = new SortedList<int, decimal>();
+                dailyTipValues[key][(int)numericUpDownDays.Value] = (decimal)numericUpDownTips.Value;
                 if (!loading)
                     CalculateCurrentDate();
+            }
+            else
+            {
+                if (dailyTipValues.ContainsKey(key) && dailyTipValues[key].ContainsKey((int)numericUpDownDays.Value))
+                {
+                    dailyTipValues[key].Remove((int)numericUpDownDays.Value);
+                    if (dailyTipValues[key].Count == 0)
+                        dailyTipValues.Remove(key);
+                }
             }
         }
 
@@ -625,8 +687,10 @@ namespace Jamba_Tips
             loading = true;
             DateTime key = RoundTime(dateTimePicker1.Value), endRange;
             endRange = key.AddDays((int)numericUpDownDays.Value - 1);
-            if (dailyTipValues.ContainsKey(key))
-                numericUpDownTips.Value = (decimal)dailyTipValues[key];
+            if (dailyTipValues.ContainsKey(key) && dailyTipValues[key].ContainsKey((int)numericUpDownDays.Value))
+            {
+                numericUpDownTips.Value = (decimal)dailyTipValues[key][(int)numericUpDownDays.Value];
+            }
             else
                 numericUpDownTips.Value = 0;
             labelDateRange.Text = $"Range: {endRange.DayOfWeek}, {monthsInYear[endRange.Month - 1]} {endRange.Day}, {endRange.Year}";
@@ -646,18 +710,9 @@ namespace Jamba_Tips
             }
         }
 
-        private void removeRecordToolStripMenuItem_Click(object sender, EventArgs e)
+        private void numericUpDownDays_ValueChanged(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count > 0)
-            {
-                DateTime key;
-                for (int i = 0; i < dataGridView1.SelectedRows.Count; i++)
-                {
-                    key = RoundTime(dateTimePicker1.Value);
-                    RemoveDay(new EmployeeDay() { name = dataGridView1.SelectedRows[i].Cells[0].Value.ToString(), day = key });
-                }
-                CalculateCurrentDate();
-            }
+            CalculateCurrentDate();
         }
 
         //Employee list tab
@@ -858,7 +913,7 @@ namespace Jamba_Tips
             if (SelectionOK(listBoxDays))
             {
                 string[] args = listBoxDays.SelectedItem.ToString().Split('/');
-                double totalHours = 0;
+                decimal totalHours = 0;
                 DateTime timeKey = new DateTime(DateTime.Now.Year, int.Parse(args[0]), int.Parse(args[1]));
                 foreach (KeyValuePair<string, EmployeeTotal> kvpA in employeeTotalList)
                 {
@@ -870,9 +925,17 @@ namespace Jamba_Tips
                     }
                 }
                 if (dailyTipValues.ContainsKey(timeKey))
-                    labelDailyTips.Text = $"Tips: ${dailyTipValues[timeKey].ToString("N2")}";
+                {
+                    StringBuilder builder = new StringBuilder();
+                    foreach (KeyValuePair<int, decimal> kvp in dailyTipValues[timeKey])
+                    {
+                        builder.AppendLine();
+                        builder.Append($"{kvp.Key}D - ${kvp.Value.ToString("N2")}");
+                    }    
+                    labelDailyTips.Text = $"Tips:{builder.ToString()}";
+                }
                 else
-                    labelDailyTips.Text = "Tips: $0.00";
+                    labelDailyTips.Text = "Tips:";
 
                 labelDailyHours.Text = $"Hours: {totalHours.ToString("N4")}";
             }
@@ -898,11 +961,6 @@ namespace Jamba_Tips
                 Properties.Settings.Default.HomepageURL = textBoxHomepage.Text;
                 Properties.Settings.Default.Save();
             }
-        }
-
-        private void numericUpDownDays_ValueChanged(object sender, EventArgs e)
-        {
-            CalculateCurrentDate();
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -948,7 +1006,7 @@ namespace Jamba_Tips
         {
             public string name = "";
             public DateTime day = new DateTime(1, 1, 1);
-            public double hours = 0, calculatedTips = 0;
+            public decimal hours = 0, calculatedTips = 0;
 
             public EmployeeDay()
             {
@@ -966,7 +1024,7 @@ namespace Jamba_Tips
             {
                 string[] array = str.Split('♠');
                 name = array[0];
-                hours = double.Parse(array[1]);
+                hours = decimal.Parse(array[1]);
                 day = new DateTime(DateTime.Now.Year, int.Parse(array[2]), int.Parse(array[3]));
             }
 

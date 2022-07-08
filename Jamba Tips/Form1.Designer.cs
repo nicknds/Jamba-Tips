@@ -51,6 +51,14 @@ namespace Jamba_Tips
             this.listBoxOutput = new System.Windows.Forms.ListBox();
             this.checkBoxAutoRead = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabControl2 = new System.Windows.Forms.TabControl();
+            this.tabPageTables = new System.Windows.Forms.TabPage();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.columnHours = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.columnTipAllotment = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tabPageText = new System.Windows.Forms.TabPage();
+            this.richTextBoxOutput = new System.Windows.Forms.RichTextBox();
             this.labelDateRange = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.numericUpDownDays = new System.Windows.Forms.NumericUpDown();
@@ -58,13 +66,6 @@ namespace Jamba_Tips
             this.label1 = new System.Windows.Forms.Label();
             this.labelHourTotal = new System.Windows.Forms.Label();
             this.numericUpDownTips = new System.Windows.Forms.NumericUpDown();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnHours = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnPercentage = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnTipAllotment = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.removeRecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.checkBoxWhiteListedTips = new System.Windows.Forms.CheckBox();
@@ -81,10 +82,6 @@ namespace Jamba_Tips
             this.label2 = new System.Windows.Forms.Label();
             this.textBoxHomepage = new System.Windows.Forms.TextBox();
             this.timerLoadDelay = new System.Windows.Forms.Timer(this.components);
-            this.tabControl2 = new System.Windows.Forms.TabControl();
-            this.tabPageTables = new System.Windows.Forms.TabPage();
-            this.tabPageText = new System.Windows.Forms.TabPage();
-            this.richTextBoxOutput = new System.Windows.Forms.RichTextBox();
             tabPage4 = new System.Windows.Forms.TabPage();
             tabPage4.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -96,15 +93,14 @@ namespace Jamba_Tips
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.webView21)).BeginInit();
             this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDays)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTips)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            this.contextMenuStrip1.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            this.tabPage5.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPageTables.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabPageText.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDays)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTips)).BeginInit();
+            this.tabPage3.SuspendLayout();
+            this.tabPage5.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabPage4
@@ -359,6 +355,97 @@ namespace Jamba_Tips
             this.tabPage2.Text = "Calculator";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // tabControl2
+            // 
+            this.tabControl2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl2.Controls.Add(this.tabPageTables);
+            this.tabControl2.Controls.Add(this.tabPageText);
+            this.tabControl2.Location = new System.Drawing.Point(0, 63);
+            this.tabControl2.Margin = new System.Windows.Forms.Padding(0);
+            this.tabControl2.Name = "tabControl2";
+            this.tabControl2.SelectedIndex = 0;
+            this.tabControl2.Size = new System.Drawing.Size(1073, 565);
+            this.tabControl2.TabIndex = 10;
+            // 
+            // tabPageTables
+            // 
+            this.tabPageTables.Controls.Add(this.dataGridView1);
+            this.tabPageTables.Location = new System.Drawing.Point(4, 27);
+            this.tabPageTables.Name = "tabPageTables";
+            this.tabPageTables.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageTables.Size = new System.Drawing.Size(1065, 534);
+            this.tabPageTables.TabIndex = 0;
+            this.tabPageTables.Text = "Table";
+            this.tabPageTables.UseVisualStyleBackColor = true;
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.columnName,
+            this.columnHours,
+            this.columnTipAllotment});
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridView1.ShowCellErrors = false;
+            this.dataGridView1.ShowCellToolTips = false;
+            this.dataGridView1.ShowEditingIcon = false;
+            this.dataGridView1.ShowRowErrors = false;
+            this.dataGridView1.Size = new System.Drawing.Size(1059, 528);
+            this.dataGridView1.TabIndex = 2;
+            // 
+            // columnName
+            // 
+            this.columnName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.columnName.FillWeight = 450F;
+            this.columnName.HeaderText = "Employee Name";
+            this.columnName.Name = "columnName";
+            this.columnName.ReadOnly = true;
+            // 
+            // columnHours
+            // 
+            this.columnHours.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.columnHours.FillWeight = 180F;
+            this.columnHours.HeaderText = "Hours";
+            this.columnHours.Name = "columnHours";
+            this.columnHours.ReadOnly = true;
+            // 
+            // columnTipAllotment
+            // 
+            this.columnTipAllotment.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.columnTipAllotment.FillWeight = 180F;
+            this.columnTipAllotment.HeaderText = "Tip Allotment";
+            this.columnTipAllotment.Name = "columnTipAllotment";
+            this.columnTipAllotment.ReadOnly = true;
+            // 
+            // tabPageText
+            // 
+            this.tabPageText.Controls.Add(this.richTextBoxOutput);
+            this.tabPageText.Location = new System.Drawing.Point(4, 27);
+            this.tabPageText.Name = "tabPageText";
+            this.tabPageText.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageText.Size = new System.Drawing.Size(1065, 534);
+            this.tabPageText.TabIndex = 1;
+            this.tabPageText.Text = "Text";
+            this.tabPageText.UseVisualStyleBackColor = true;
+            // 
+            // richTextBoxOutput
+            // 
+            this.richTextBoxOutput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBoxOutput.Location = new System.Drawing.Point(3, 3);
+            this.richTextBoxOutput.Name = "richTextBoxOutput";
+            this.richTextBoxOutput.ReadOnly = true;
+            this.richTextBoxOutput.Size = new System.Drawing.Size(1059, 528);
+            this.richTextBoxOutput.TabIndex = 0;
+            this.richTextBoxOutput.Text = "";
+            // 
             // labelDateRange
             // 
             this.labelDateRange.AutoSize = true;
@@ -446,66 +533,6 @@ namespace Jamba_Tips
             this.numericUpDownTips.TabIndex = 3;
             this.numericUpDownTips.ThousandsSeparator = true;
             this.numericUpDownTips.ValueChanged += new System.EventHandler(this.numericUpDownTips_ValueChanged);
-            // 
-            // dataGridView1
-            // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.columnName,
-            this.columnHours,
-            this.columnPercentage,
-            this.columnTipAllotment});
-            this.dataGridView1.ContextMenuStrip = this.contextMenuStrip1;
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(1059, 528);
-            this.dataGridView1.TabIndex = 2;
-            // 
-            // columnName
-            // 
-            this.columnName.HeaderText = "Employee Name";
-            this.columnName.Name = "columnName";
-            this.columnName.ReadOnly = true;
-            this.columnName.Width = 450;
-            // 
-            // columnHours
-            // 
-            this.columnHours.HeaderText = "Hours";
-            this.columnHours.Name = "columnHours";
-            this.columnHours.ReadOnly = true;
-            this.columnHours.Width = 125;
-            // 
-            // columnPercentage
-            // 
-            this.columnPercentage.HeaderText = "Percentage";
-            this.columnPercentage.Name = "columnPercentage";
-            this.columnPercentage.ReadOnly = true;
-            this.columnPercentage.Width = 125;
-            // 
-            // columnTipAllotment
-            // 
-            this.columnTipAllotment.HeaderText = "Tip Allotment";
-            this.columnTipAllotment.Name = "columnTipAllotment";
-            this.columnTipAllotment.ReadOnly = true;
-            this.columnTipAllotment.Width = 125;
-            // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.removeRecordToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(158, 26);
-            // 
-            // removeRecordToolStripMenuItem
-            // 
-            this.removeRecordToolStripMenuItem.Name = "removeRecordToolStripMenuItem";
-            this.removeRecordToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
-            this.removeRecordToolStripMenuItem.Text = "Remove Record";
-            this.removeRecordToolStripMenuItem.Click += new System.EventHandler(this.removeRecordToolStripMenuItem_Click);
             // 
             // dateTimePicker1
             // 
@@ -673,52 +700,6 @@ namespace Jamba_Tips
             this.timerLoadDelay.Interval = 500;
             this.timerLoadDelay.Tick += new System.EventHandler(this.timerLoadDelay_Tick);
             // 
-            // tabControl2
-            // 
-            this.tabControl2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl2.Controls.Add(this.tabPageTables);
-            this.tabControl2.Controls.Add(this.tabPageText);
-            this.tabControl2.Location = new System.Drawing.Point(0, 63);
-            this.tabControl2.Margin = new System.Windows.Forms.Padding(0);
-            this.tabControl2.Name = "tabControl2";
-            this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(1073, 565);
-            this.tabControl2.TabIndex = 10;
-            // 
-            // tabPageTables
-            // 
-            this.tabPageTables.Controls.Add(this.dataGridView1);
-            this.tabPageTables.Location = new System.Drawing.Point(4, 27);
-            this.tabPageTables.Name = "tabPageTables";
-            this.tabPageTables.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageTables.Size = new System.Drawing.Size(1065, 534);
-            this.tabPageTables.TabIndex = 0;
-            this.tabPageTables.Text = "Table";
-            this.tabPageTables.UseVisualStyleBackColor = true;
-            // 
-            // tabPageText
-            // 
-            this.tabPageText.Controls.Add(this.richTextBoxOutput);
-            this.tabPageText.Location = new System.Drawing.Point(4, 27);
-            this.tabPageText.Name = "tabPageText";
-            this.tabPageText.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageText.Size = new System.Drawing.Size(1065, 534);
-            this.tabPageText.TabIndex = 1;
-            this.tabPageText.Text = "Text";
-            this.tabPageText.UseVisualStyleBackColor = true;
-            // 
-            // richTextBoxOutput
-            // 
-            this.richTextBoxOutput.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBoxOutput.Location = new System.Drawing.Point(3, 3);
-            this.richTextBoxOutput.Name = "richTextBoxOutput";
-            this.richTextBoxOutput.ReadOnly = true;
-            this.richTextBoxOutput.Size = new System.Drawing.Size(1059, 528);
-            this.richTextBoxOutput.TabIndex = 0;
-            this.richTextBoxOutput.Text = "";
-            // 
             // Form1
             // 
             this.AcceptButton = this.button1;
@@ -749,17 +730,16 @@ namespace Jamba_Tips
             ((System.ComponentModel.ISupportInitialize)(this.webView21)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.tabControl2.ResumeLayout(false);
+            this.tabPageTables.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.tabPageText.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDays)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTips)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            this.contextMenuStrip1.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
-            this.tabControl2.ResumeLayout(false);
-            this.tabPageTables.ResumeLayout(false);
-            this.tabPageText.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -779,12 +759,6 @@ namespace Jamba_Tips
         private System.Windows.Forms.Label labelTotalTips;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelHourTotal;
-        private System.Windows.Forms.DataGridViewTextBoxColumn columnName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn columnHours;
-        private System.Windows.Forms.DataGridViewTextBoxColumn columnPercentage;
-        private System.Windows.Forms.DataGridViewTextBoxColumn columnTipAllotment;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem removeRecordToolStripMenuItem;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.ListBox listBoxEmployees;
         private System.Windows.Forms.Button button4;
@@ -819,6 +793,9 @@ namespace Jamba_Tips
         private System.Windows.Forms.TabPage tabPageTables;
         private System.Windows.Forms.TabPage tabPageText;
         private System.Windows.Forms.RichTextBox richTextBoxOutput;
+        private System.Windows.Forms.DataGridViewTextBoxColumn columnName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn columnHours;
+        private System.Windows.Forms.DataGridViewTextBoxColumn columnTipAllotment;
     }
 }
 
