@@ -38,7 +38,7 @@ namespace Jamba_Tips
 
         public ReadStatus readStatus = ReadStatus.Read;
 
-        public string empInfo = "", timesheet = "";
+        public string empInfo = "", timesheet = "", lastClipBoard = "";
 
         //Main functions
 
@@ -67,6 +67,14 @@ namespace Jamba_Tips
                 Output($"Loaded tips: {dailyTipValues.Count}");
             if (blacklistedEmployees.Count > 0)
                 Output($"Employees excluded from tips: {blacklistedEmployees.Count}");
+
+            if (checkBoxClipboardMonitor.Checked && Clipboard.ContainsText())
+            {
+                string clipboardText = Clipboard.GetText();
+                if (clipboardText != String.Empty && !CompareStrings(clipboardText, lastClipBoard))
+                    lastClipBoard = clipboardText;
+            }
+
             loading = false;
         }
 
@@ -210,6 +218,113 @@ namespace Jamba_Tips
             {
                 timerList[key].Restart();
             }
+        }
+
+        private void timerClipboardMonitor_Tick(object sender, EventArgs e)
+        {
+            if (checkBoxClipboardMonitor.Checked && Clipboard.ContainsText())
+            {
+                string clipboardText = Clipboard.GetText();
+                if (clipboardText != String.Empty && !CompareStrings(clipboardText, lastClipBoard))
+                {
+                    System.IO.Stream str = Properties.Resources.collierhs_colinlib__elevator_ding;
+                    System.Media.SoundPlayer snd = new System.Media.SoundPlayer(str);
+                    snd.Play();
+                    ParseStringData(clipboardText);
+                    lastClipBoard = clipboardText;
+                }
+            }
+        }
+
+        public bool CompareStrings(string a, string b)
+        {
+            return a.Length == b.Length && String.Compare(a, b) == 0;
+        }
+
+        public void ParseStringData(string text)
+        {
+            try
+            {
+                int index;
+                string subString, name, currentLine, currentDate, currentHours,
+                    keyName = "Timecard Editor",
+                    keyTimeCardStart = "Allocation  (tax)",
+                    keyTimeCardEnd = "Approve By Date",
+                    keyRowEnd = "delete row";
+                decimal parsedHours;
+                string[] lineArray;
+                List<string> rowList = new List<string>();
+                DateTime parsedDate;
+
+                //Get name
+                index = text.IndexOf(keyName);
+                subString = text.Substring(index);
+                lineArray = subString.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                name = Properties.Settings.Default.NormalizedNames ? NormalizeName(lineArray[1]) : lineArray[1];
+                LongOutput($"Name from clipboard: {name}");
+
+                //Get timecard
+                index = text.IndexOf(keyTimeCardStart);
+                subString = text.Substring(index);
+                index = subString.IndexOf(keyTimeCardEnd);
+                subString = subString.Substring(0, index);
+
+                while (subString.Length > 0)
+                {
+                    index = subString.IndexOf(keyRowEnd);
+                    if (index > 0)
+                    {
+                        currentLine = subString.Substring(0, index).Replace("\r\n", "	").Replace("\r", "	").Replace("\n", "	").Trim(new char[] { '	', ' ' });
+                        subString = subString.Substring(index + keyRowEnd.Length);
+
+                        index = currentLine.LastIndexOf("(");
+                        if (index > 0)
+                        {
+                            currentLine = currentLine.Substring(index);
+                            rowList.Add(currentLine);
+                        }
+                    }
+                    else break;
+                }
+
+                for (int i = 0; i < rowList.Count; i++)
+                {
+                    lineArray = rowList[i].Split('	');
+                    if (lineArray.Length >= 2)
+                    {
+                        currentDate = lineArray[0].Trim(new char[] { '	', ' ' });
+                        currentHours = lineArray[lineArray.Length - 1].Trim(new char[] { '	', ' ' });
+                        if (decimal.TryParse(currentHours, out parsedHours) && GetDate(currentDate, out parsedDate))
+                        {
+                            EmployeeDay day = new EmployeeDay() { name = name, day = parsedDate, hours = parsedHours };
+                            AddDay(day);
+                        }
+                        else
+                        {
+                            LongOutput($"Input not accepted '{currentDate}' and '{currentHours}'");
+                        }
+                    }
+                }
+            }
+            catch { LongOutput("Error caught parsing clipboard data."); }
+        }
+
+        public bool GetDate(string text, out DateTime date)
+        {
+            try
+            {
+                string subText = text;
+                int index = subText.IndexOf("(");
+                subText = subText.Substring(index + 1);
+                index = subText.IndexOf(")");
+                subText = subText.Substring(0, index);
+                string[] args = subText.Split('/');
+                date = RoundTime(new DateTime(DateTime.Now.Year, int.Parse(args[0]), int.Parse(args[1])));
+                return true;
+            }
+            catch { }
+            date = DateTime.Now;
+            return false;
         }
 
         //Browser tab
@@ -469,17 +584,22 @@ namespace Jamba_Tips
             {
                 name = document.GetElementById("empInfo").Children[1].Children[1].Children[0].Children[0].Children[0].Children[0].InnerText;
                 if (Properties.Settings.Default.NormalizedNames)
-                {
-                    int index = name.IndexOf("(");
-                    if (index > 0)
-                    {
-                        name = name.Substring(0, index).Trim();
-                    }
-                }
+                    name = NormalizeName(name);
                 return true;
             }
             catch { Output("Unable to find employee name! This may not be the correct page."); }
             return false;
+        }
+
+        public string NormalizeName(string givenName)
+        {
+            string name = givenName;
+            int index = name.IndexOf("(");
+            if (index > 0)
+            {
+                name = name.Substring(0, index).Trim();
+            }
+            return name;
         }
 
         public bool GetDate(HtmlDocument document, int day, ref DateTime date)

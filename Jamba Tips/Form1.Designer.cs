@@ -41,6 +41,7 @@ namespace Jamba_Tips
             this.listBoxDays = new System.Windows.Forms.ListBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.checkBoxClipboardMonitor = new System.Windows.Forms.CheckBox();
             this.panelNavigation = new System.Windows.Forms.Panel();
             this.button1 = new System.Windows.Forms.Button();
             this.buttonRead = new System.Windows.Forms.Button();
@@ -82,6 +83,7 @@ namespace Jamba_Tips
             this.label2 = new System.Windows.Forms.Label();
             this.textBoxHomepage = new System.Windows.Forms.TextBox();
             this.timerLoadDelay = new System.Windows.Forms.Timer(this.components);
+            this.timerClipboardMonitor = new System.Windows.Forms.Timer(this.components);
             tabPage4 = new System.Windows.Forms.TabPage();
             tabPage4.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -209,6 +211,7 @@ namespace Jamba_Tips
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.checkBoxClipboardMonitor);
             this.tabPage1.Controls.Add(this.panelNavigation);
             this.tabPage1.Controls.Add(this.splitContainer1);
             this.tabPage1.Controls.Add(this.checkBoxAutoRead);
@@ -217,7 +220,20 @@ namespace Jamba_Tips
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(1073, 628);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Browser";
+            this.tabPage1.Text = "Data Entry";
+            // 
+            // checkBoxClipboardMonitor
+            // 
+            this.checkBoxClipboardMonitor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxClipboardMonitor.AutoSize = true;
+            this.checkBoxClipboardMonitor.Checked = true;
+            this.checkBoxClipboardMonitor.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxClipboardMonitor.Location = new System.Drawing.Point(873, 8);
+            this.checkBoxClipboardMonitor.Name = "checkBoxClipboardMonitor";
+            this.checkBoxClipboardMonitor.Size = new System.Drawing.Size(90, 22);
+            this.checkBoxClipboardMonitor.TabIndex = 8;
+            this.checkBoxClipboardMonitor.Text = "Clipboard";
+            this.checkBoxClipboardMonitor.UseVisualStyleBackColor = true;
             // 
             // panelNavigation
             // 
@@ -229,13 +245,13 @@ namespace Jamba_Tips
             this.panelNavigation.Location = new System.Drawing.Point(8, 3);
             this.panelNavigation.Margin = new System.Windows.Forms.Padding(0);
             this.panelNavigation.Name = "panelNavigation";
-            this.panelNavigation.Size = new System.Drawing.Size(958, 30);
+            this.panelNavigation.Size = new System.Drawing.Size(862, 30);
             this.panelNavigation.TabIndex = 7;
             // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(799, 0);
+            this.button1.Location = new System.Drawing.Point(703, 0);
             this.button1.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 30);
@@ -247,7 +263,7 @@ namespace Jamba_Tips
             // buttonRead
             // 
             this.buttonRead.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonRead.Location = new System.Drawing.Point(880, 0);
+            this.buttonRead.Location = new System.Drawing.Point(784, 0);
             this.buttonRead.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.buttonRead.Name = "buttonRead";
             this.buttonRead.Size = new System.Drawing.Size(75, 30);
@@ -262,7 +278,7 @@ namespace Jamba_Tips
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxURL.Location = new System.Drawing.Point(3, 3);
             this.textBoxURL.Name = "textBoxURL";
-            this.textBoxURL.Size = new System.Drawing.Size(790, 24);
+            this.textBoxURL.Size = new System.Drawing.Size(694, 24);
             this.textBoxURL.TabIndex = 1;
             // 
             // splitContainer1
@@ -283,7 +299,7 @@ namespace Jamba_Tips
             // 
             this.splitContainer1.Panel2.Controls.Add(this.listBoxOutput);
             this.splitContainer1.Size = new System.Drawing.Size(1057, 586);
-            this.splitContainer1.SplitterDistance = 501;
+            this.splitContainer1.SplitterDistance = 25;
             this.splitContainer1.TabIndex = 6;
             // 
             // webBrowser1
@@ -307,7 +323,7 @@ namespace Jamba_Tips
             this.webView21.Dock = System.Windows.Forms.DockStyle.Fill;
             this.webView21.Location = new System.Drawing.Point(0, 0);
             this.webView21.Name = "webView21";
-            this.webView21.Size = new System.Drawing.Size(1057, 501);
+            this.webView21.Size = new System.Drawing.Size(1057, 25);
             this.webView21.Source = new System.Uri("https://google.com", System.UriKind.Absolute);
             this.webView21.TabIndex = 1;
             this.webView21.ZoomFactor = 1D;
@@ -322,7 +338,7 @@ namespace Jamba_Tips
             this.listBoxOutput.ItemHeight = 18;
             this.listBoxOutput.Location = new System.Drawing.Point(0, 0);
             this.listBoxOutput.Name = "listBoxOutput";
-            this.listBoxOutput.Size = new System.Drawing.Size(1057, 81);
+            this.listBoxOutput.Size = new System.Drawing.Size(1057, 557);
             this.listBoxOutput.TabIndex = 5;
             // 
             // checkBoxAutoRead
@@ -700,6 +716,12 @@ namespace Jamba_Tips
             this.timerLoadDelay.Interval = 500;
             this.timerLoadDelay.Tick += new System.EventHandler(this.timerLoadDelay_Tick);
             // 
+            // timerClipboardMonitor
+            // 
+            this.timerClipboardMonitor.Enabled = true;
+            this.timerClipboardMonitor.Interval = 1500;
+            this.timerClipboardMonitor.Tick += new System.EventHandler(this.timerClipboardMonitor_Tick);
+            // 
             // Form1
             // 
             this.AcceptButton = this.button1;
@@ -796,6 +818,8 @@ namespace Jamba_Tips
         private System.Windows.Forms.DataGridViewTextBoxColumn columnName;
         private System.Windows.Forms.DataGridViewTextBoxColumn columnHours;
         private System.Windows.Forms.DataGridViewTextBoxColumn columnTipAllotment;
+        private System.Windows.Forms.Timer timerClipboardMonitor;
+        private System.Windows.Forms.CheckBox checkBoxClipboardMonitor;
     }
 }
 
