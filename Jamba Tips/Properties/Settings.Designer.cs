@@ -25,18 +25,6 @@ namespace Jamba_Tips.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://paycom.com")]
-        public string HomepageURL {
-            get {
-                return ((string)(this["HomepageURL"]));
-            }
-            set {
-                this["HomepageURL"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool NormalizedNames {
             get {

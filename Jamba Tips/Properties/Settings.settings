@@ -2,9 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Jamba_Tips.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="HomepageURL" Type="System.String" Scope="User">
-      <Value Profile="(Default)">https://paycom.com</Value>
-    </Setting>
     <Setting Name="NormalizedNames" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
