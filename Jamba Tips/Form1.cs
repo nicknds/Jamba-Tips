@@ -241,6 +241,8 @@ namespace Jamba_Tips
 
                 for (int i = 1; i <= 7; i++)
                     ExtractDay(ref weekA, name);
+                for (int i = 1; i <= 7; i++)
+                    ExtractDay(ref weekB, name);
             }
             catch { LongOutput("Error caught parsing clipboard data. "); }
         }
