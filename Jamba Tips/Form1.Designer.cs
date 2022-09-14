@@ -31,6 +31,9 @@ namespace Jamba_Tips
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.TabPage tabPage4;
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.labelDailyTips = new System.Windows.Forms.Label();
             this.labelDailyHours = new System.Windows.Forms.Label();
@@ -47,9 +50,6 @@ namespace Jamba_Tips
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPageTables = new System.Windows.Forms.TabPage();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnHours = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnTipAllotment = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabPageText = new System.Windows.Forms.TabPage();
             this.richTextBoxOutput = new System.Windows.Forms.RichTextBox();
             this.labelDateRange = new System.Windows.Forms.Label();
@@ -73,6 +73,18 @@ namespace Jamba_Tips
             this.checkBoxNormalizedNames = new System.Windows.Forms.CheckBox();
             this.button7 = new System.Windows.Forms.Button();
             this.timerClipboardMonitor = new System.Windows.Forms.Timer(this.components);
+            this.buttonAddEmployeeManual = new System.Windows.Forms.Button();
+            this.textBoxEmployeeNameManual = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.dateTimePickerEmployeeManual = new System.Windows.Forms.DateTimePicker();
+            this.numericUpDownEmployeeTipsManual = new System.Windows.Forms.NumericUpDown();
+            this.label4 = new System.Windows.Forms.Label();
+            this.contextMenuStripDataGridView = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.deleteRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.columnHours = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.columnTipAllotment = new System.Windows.Forms.DataGridViewTextBoxColumn();
             tabPage4 = new System.Windows.Forms.TabPage();
             tabPage4.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -86,10 +98,14 @@ namespace Jamba_Tips
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTips)).BeginInit();
             this.tabPage3.SuspendLayout();
             this.tabPage5.SuspendLayout();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEmployeeTipsManual)).BeginInit();
+            this.contextMenuStripDataGridView.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabPage4
             // 
+            tabPage4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(197)))), ((int)(((byte)(60)))));
             tabPage4.Controls.Add(this.labelDailyTips);
             tabPage4.Controls.Add(this.labelDailyHours);
             tabPage4.Controls.Add(this.button6);
@@ -102,7 +118,6 @@ namespace Jamba_Tips
             tabPage4.Size = new System.Drawing.Size(1073, 628);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "Days";
-            tabPage4.UseVisualStyleBackColor = true;
             // 
             // labelDailyTips
             // 
@@ -146,6 +161,8 @@ namespace Jamba_Tips
             // 
             this.listBoxDaysEmployees.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.listBoxDaysEmployees.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(112)))), ((int)(((byte)(88)))));
+            this.listBoxDaysEmployees.ForeColor = System.Drawing.Color.White;
             this.listBoxDaysEmployees.FormattingEnabled = true;
             this.listBoxDaysEmployees.ItemHeight = 18;
             this.listBoxDaysEmployees.Location = new System.Drawing.Point(497, 3);
@@ -167,6 +184,8 @@ namespace Jamba_Tips
             // 
             this.listBoxDays.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.listBoxDays.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(112)))), ((int)(((byte)(88)))));
+            this.listBoxDays.ForeColor = System.Drawing.Color.White;
             this.listBoxDays.FormattingEnabled = true;
             this.listBoxDays.ItemHeight = 18;
             this.listBoxDays.Location = new System.Drawing.Point(8, 3);
@@ -193,7 +212,8 @@ namespace Jamba_Tips
             // 
             // tabPage1
             // 
-            this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(197)))), ((int)(((byte)(60)))));
+            this.tabPage1.Controls.Add(this.panel1);
             this.tabPage1.Controls.Add(this.listBoxOutput);
             this.tabPage1.Controls.Add(this.checkBoxClipboardMonitor);
             this.tabPage1.Location = new System.Drawing.Point(4, 27);
@@ -208,28 +228,30 @@ namespace Jamba_Tips
             this.listBoxOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBoxOutput.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(112)))), ((int)(((byte)(88)))));
+            this.listBoxOutput.ForeColor = System.Drawing.Color.White;
             this.listBoxOutput.FormattingEnabled = true;
             this.listBoxOutput.ItemHeight = 18;
-            this.listBoxOutput.Location = new System.Drawing.Point(8, 34);
+            this.listBoxOutput.Location = new System.Drawing.Point(8, 106);
             this.listBoxOutput.Name = "listBoxOutput";
-            this.listBoxOutput.Size = new System.Drawing.Size(1057, 580);
+            this.listBoxOutput.Size = new System.Drawing.Size(1057, 508);
             this.listBoxOutput.TabIndex = 5;
             // 
             // checkBoxClipboardMonitor
             // 
-            this.checkBoxClipboardMonitor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxClipboardMonitor.AutoSize = true;
             this.checkBoxClipboardMonitor.Checked = true;
             this.checkBoxClipboardMonitor.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxClipboardMonitor.Location = new System.Drawing.Point(8, 6);
             this.checkBoxClipboardMonitor.Name = "checkBoxClipboardMonitor";
-            this.checkBoxClipboardMonitor.Size = new System.Drawing.Size(90, 22);
+            this.checkBoxClipboardMonitor.Size = new System.Drawing.Size(163, 22);
             this.checkBoxClipboardMonitor.TabIndex = 8;
-            this.checkBoxClipboardMonitor.Text = "Clipboard";
+            this.checkBoxClipboardMonitor.Text = "Clipboard Data Entry";
             this.checkBoxClipboardMonitor.UseVisualStyleBackColor = true;
             // 
             // tabPage2
             // 
+            this.tabPage2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(197)))), ((int)(((byte)(60)))));
             this.tabPage2.Controls.Add(this.tabControl2);
             this.tabPage2.Controls.Add(this.labelDateRange);
             this.tabPage2.Controls.Add(this.label3);
@@ -245,7 +267,6 @@ namespace Jamba_Tips
             this.tabPage2.Size = new System.Drawing.Size(1073, 628);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Calculator";
-            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // tabControl2
             // 
@@ -274,48 +295,39 @@ namespace Jamba_Tips
             // 
             // dataGridView1
             // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.MenuBar;
+            this.dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            this.dataGridView1.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(112)))), ((int)(((byte)(88)))));
+            this.dataGridView1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(116)))), ((int)(((byte)(192)))), ((int)(((byte)(76)))));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.columnName,
             this.columnHours,
             this.columnTipAllotment});
+            this.dataGridView1.ContextMenuStrip = this.contextMenuStripDataGridView;
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.dataGridView1.EnableHeadersVisualStyles = false;
             this.dataGridView1.Location = new System.Drawing.Point(3, 3);
+            this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGridView1.ShowCellErrors = false;
             this.dataGridView1.ShowCellToolTips = false;
             this.dataGridView1.ShowEditingIcon = false;
             this.dataGridView1.ShowRowErrors = false;
             this.dataGridView1.Size = new System.Drawing.Size(1059, 528);
             this.dataGridView1.TabIndex = 2;
-            // 
-            // columnName
-            // 
-            this.columnName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.columnName.FillWeight = 450F;
-            this.columnName.HeaderText = "Employee Name";
-            this.columnName.Name = "columnName";
-            this.columnName.ReadOnly = true;
-            // 
-            // columnHours
-            // 
-            this.columnHours.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.columnHours.FillWeight = 180F;
-            this.columnHours.HeaderText = "Hours";
-            this.columnHours.Name = "columnHours";
-            this.columnHours.ReadOnly = true;
-            // 
-            // columnTipAllotment
-            // 
-            this.columnTipAllotment.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.columnTipAllotment.FillWeight = 180F;
-            this.columnTipAllotment.HeaderText = "Tip Allotment";
-            this.columnTipAllotment.Name = "columnTipAllotment";
-            this.columnTipAllotment.ReadOnly = true;
+            this.dataGridView1.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView1_CellBeginEdit);
+            this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellEndEdit);
             // 
             // tabPageText
             // 
@@ -330,7 +342,9 @@ namespace Jamba_Tips
             // 
             // richTextBoxOutput
             // 
+            this.richTextBoxOutput.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(116)))), ((int)(((byte)(192)))), ((int)(((byte)(76)))));
             this.richTextBoxOutput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBoxOutput.ForeColor = System.Drawing.Color.White;
             this.richTextBoxOutput.Location = new System.Drawing.Point(3, 3);
             this.richTextBoxOutput.Name = "richTextBoxOutput";
             this.richTextBoxOutput.ReadOnly = true;
@@ -437,6 +451,7 @@ namespace Jamba_Tips
             // 
             // tabPage3
             // 
+            this.tabPage3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(197)))), ((int)(((byte)(60)))));
             this.tabPage3.Controls.Add(this.checkBoxWhiteListedTips);
             this.tabPage3.Controls.Add(this.labelEmployeeHours);
             this.tabPage3.Controls.Add(this.button5);
@@ -449,7 +464,6 @@ namespace Jamba_Tips
             this.tabPage3.Size = new System.Drawing.Size(1073, 628);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Employees";
-            this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // checkBoxWhiteListedTips
             // 
@@ -495,6 +509,8 @@ namespace Jamba_Tips
             // 
             this.listBoxEmployeeDays.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.listBoxEmployeeDays.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(112)))), ((int)(((byte)(88)))));
+            this.listBoxEmployeeDays.ForeColor = System.Drawing.Color.White;
             this.listBoxEmployeeDays.FormattingEnabled = true;
             this.listBoxEmployeeDays.ItemHeight = 18;
             this.listBoxEmployeeDays.Location = new System.Drawing.Point(497, 3);
@@ -517,6 +533,8 @@ namespace Jamba_Tips
             // 
             this.listBoxEmployees.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.listBoxEmployees.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(112)))), ((int)(((byte)(88)))));
+            this.listBoxEmployees.ForeColor = System.Drawing.Color.White;
             this.listBoxEmployees.FormattingEnabled = true;
             this.listBoxEmployees.ItemHeight = 18;
             this.listBoxEmployees.Location = new System.Drawing.Point(8, 3);
@@ -527,6 +545,7 @@ namespace Jamba_Tips
             // 
             // tabPage5
             // 
+            this.tabPage5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(197)))), ((int)(((byte)(60)))));
             this.tabPage5.Controls.Add(this.button8);
             this.tabPage5.Controls.Add(this.checkBoxNormalizedNames);
             this.tabPage5.Controls.Add(this.button7);
@@ -535,7 +554,6 @@ namespace Jamba_Tips
             this.tabPage5.Size = new System.Drawing.Size(1073, 628);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Settings";
-            this.tabPage5.UseVisualStyleBackColor = true;
             // 
             // button8
             // 
@@ -574,12 +592,134 @@ namespace Jamba_Tips
             this.timerClipboardMonitor.Interval = 500;
             this.timerClipboardMonitor.Tick += new System.EventHandler(this.timerClipboardMonitor_Tick);
             // 
+            // buttonAddEmployeeManual
+            // 
+            this.buttonAddEmployeeManual.Location = new System.Drawing.Point(3, 23);
+            this.buttonAddEmployeeManual.Name = "buttonAddEmployeeManual";
+            this.buttonAddEmployeeManual.Size = new System.Drawing.Size(75, 30);
+            this.buttonAddEmployeeManual.TabIndex = 9;
+            this.buttonAddEmployeeManual.Text = "Add";
+            this.buttonAddEmployeeManual.UseVisualStyleBackColor = true;
+            this.buttonAddEmployeeManual.Click += new System.EventHandler(this.buttonAddEmployeeManual_Click);
+            // 
+            // textBoxEmployeeNameManual
+            // 
+            this.textBoxEmployeeNameManual.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.textBoxEmployeeNameManual.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
+            this.textBoxEmployeeNameManual.Location = new System.Drawing.Point(84, 26);
+            this.textBoxEmployeeNameManual.Name = "textBoxEmployeeNameManual";
+            this.textBoxEmployeeNameManual.Size = new System.Drawing.Size(306, 24);
+            this.textBoxEmployeeNameManual.TabIndex = 10;
+            // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(177)))), ((int)(((byte)(212)))), ((int)(((byte)(97)))));
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.numericUpDownEmployeeTipsManual);
+            this.panel1.Controls.Add(this.dateTimePickerEmployeeManual);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.buttonAddEmployeeManual);
+            this.panel1.Controls.Add(this.textBoxEmployeeNameManual);
+            this.panel1.Location = new System.Drawing.Point(8, 34);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1057, 66);
+            this.panel1.TabIndex = 11;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(81, 5);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(118, 18);
+            this.label2.TabIndex = 11;
+            this.label2.Text = "Employee Name";
+            // 
+            // dateTimePickerEmployeeManual
+            // 
+            this.dateTimePickerEmployeeManual.Location = new System.Drawing.Point(522, 26);
+            this.dateTimePickerEmployeeManual.Name = "dateTimePickerEmployeeManual";
+            this.dateTimePickerEmployeeManual.Size = new System.Drawing.Size(280, 24);
+            this.dateTimePickerEmployeeManual.TabIndex = 12;
+            // 
+            // numericUpDownEmployeeTipsManual
+            // 
+            this.numericUpDownEmployeeTipsManual.DecimalPlaces = 2;
+            this.numericUpDownEmployeeTipsManual.Location = new System.Drawing.Point(396, 26);
+            this.numericUpDownEmployeeTipsManual.Maximum = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+            this.numericUpDownEmployeeTipsManual.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.numericUpDownEmployeeTipsManual.Name = "numericUpDownEmployeeTipsManual";
+            this.numericUpDownEmployeeTipsManual.Size = new System.Drawing.Size(120, 24);
+            this.numericUpDownEmployeeTipsManual.TabIndex = 13;
+            this.numericUpDownEmployeeTipsManual.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(393, 5);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(49, 18);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "Hours";
+            // 
+            // contextMenuStripDataGridView
+            // 
+            this.contextMenuStripDataGridView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.deleteRowToolStripMenuItem});
+            this.contextMenuStripDataGridView.Name = "contextMenuStripDataGridView";
+            this.contextMenuStripDataGridView.Size = new System.Drawing.Size(134, 26);
+            this.contextMenuStripDataGridView.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStripDataGridView_Opening);
+            // 
+            // deleteRowToolStripMenuItem
+            // 
+            this.deleteRowToolStripMenuItem.Name = "deleteRowToolStripMenuItem";
+            this.deleteRowToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.deleteRowToolStripMenuItem.Text = "Delete Row";
+            this.deleteRowToolStripMenuItem.Click += new System.EventHandler(this.deleteRowToolStripMenuItem_Click);
+            // 
+            // columnName
+            // 
+            this.columnName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            this.columnName.DefaultCellStyle = dataGridViewCellStyle3;
+            this.columnName.FillWeight = 450F;
+            this.columnName.HeaderText = "Employee Name";
+            this.columnName.Name = "columnName";
+            // 
+            // columnHours
+            // 
+            this.columnHours.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.columnHours.FillWeight = 180F;
+            this.columnHours.HeaderText = "Hours";
+            this.columnHours.Name = "columnHours";
+            // 
+            // columnTipAllotment
+            // 
+            this.columnTipAllotment.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.columnTipAllotment.FillWeight = 180F;
+            this.columnTipAllotment.HeaderText = "Tip Allotment";
+            this.columnTipAllotment.Name = "columnTipAllotment";
+            this.columnTipAllotment.ReadOnly = true;
+            // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(128)))), ((int)(((byte)(75)))));
             this.ClientSize = new System.Drawing.Size(1081, 659);
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -604,6 +744,10 @@ namespace Jamba_Tips
             this.tabPage3.PerformLayout();
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEmployeeTipsManual)).EndInit();
+            this.contextMenuStripDataGridView.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -646,11 +790,20 @@ namespace Jamba_Tips
         private System.Windows.Forms.TabPage tabPageTables;
         private System.Windows.Forms.TabPage tabPageText;
         private System.Windows.Forms.RichTextBox richTextBoxOutput;
+        private System.Windows.Forms.Timer timerClipboardMonitor;
+        private System.Windows.Forms.CheckBox checkBoxClipboardMonitor;
+        private System.Windows.Forms.Button buttonAddEmployeeManual;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.NumericUpDown numericUpDownEmployeeTipsManual;
+        private System.Windows.Forms.DateTimePicker dateTimePickerEmployeeManual;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox textBoxEmployeeNameManual;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStripDataGridView;
+        private System.Windows.Forms.ToolStripMenuItem deleteRowToolStripMenuItem;
         private System.Windows.Forms.DataGridViewTextBoxColumn columnName;
         private System.Windows.Forms.DataGridViewTextBoxColumn columnHours;
         private System.Windows.Forms.DataGridViewTextBoxColumn columnTipAllotment;
-        private System.Windows.Forms.Timer timerClipboardMonitor;
-        private System.Windows.Forms.CheckBox checkBoxClipboardMonitor;
     }
 }
 

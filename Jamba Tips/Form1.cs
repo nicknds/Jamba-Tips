@@ -25,7 +25,18 @@ namespace Jamba_Tips
 
         public string[] monthsInYear = new string[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
-        public string lastClipBoard = "";
+        public string lastClipBoard = "", currentCellString = "";
+
+        public decimal currentCellDecimal = 0m;
+
+        public CurrentCellType currentCellType = CurrentCellType.None;
+
+        public enum CurrentCellType
+        {
+            Name,
+            Hours,
+            None
+        };
 
         //Main functions
 
@@ -47,6 +58,8 @@ namespace Jamba_Tips
                 Output($"Loaded tips: {dailyTipValues.Count}");
             if (blacklistedEmployees.Count > 0)
                 Output($"Employees excluded from tips: {blacklistedEmployees.Count}");
+
+            SetAutoFill();
 
             if (checkBoxClipboardMonitor.Checked && Clipboard.ContainsText())
             {
@@ -134,6 +147,9 @@ namespace Jamba_Tips
         {
             switch (tabControl1.SelectedIndex)
             {
+                case 0:
+                    SetAutoFill();
+                    break;
                 case 1:
                     CalculateCurrentDate();
                     break;
@@ -349,6 +365,23 @@ namespace Jamba_Tips
             employeeTotalList[day.name].employeeDays[day.day] = new EmployeeDay(day);
         }
 
+        private void buttonAddEmployeeManual_Click(object sender, EventArgs e)
+        {
+            if (textBoxEmployeeNameManual.Text.Length > 0)
+            {
+                AddDay(new EmployeeDay { name = textBoxEmployeeNameManual.Text, day = RoundTime(dateTimePickerEmployeeManual.Value), hours = numericUpDownEmployeeTipsManual.Value });
+                textBoxEmployeeNameManual.Text = "";
+                SetAutoFill();
+            }
+        }
+
+        public void SetAutoFill()
+        {
+            textBoxEmployeeNameManual.AutoCompleteCustomSource.Clear();
+            textBoxEmployeeNameManual.AutoCompleteCustomSource.AddRange(blacklistedEmployees.ToArray());
+            textBoxEmployeeNameManual.AutoCompleteCustomSource.AddRange(employeeTotalList.Keys.ToArray());
+        }
+
         //Calculator tab
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
@@ -503,11 +536,158 @@ namespace Jamba_Tips
             loading = false;
 
             CalculateDate(dateTimePicker1.Value, TimeSpan.FromDays((int)numericUpDownDays.Value));
+
+            //Set manual to single day only
+            if (numericUpDownDays.Value == 1m)
+            {
+                dataGridView1.ReadOnly = false;
+                dataGridView1.AllowUserToAddRows = true;
+                dataGridView1.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            }
+            else
+            {
+                dataGridView1.ReadOnly = true;
+                dataGridView1.AllowUserToAddRows = false;
+                dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            }
+            dataGridView1.Columns[2].ReadOnly = true;
         }
 
         private void numericUpDownDays_ValueChanged(object sender, EventArgs e)
         {
             CalculateCurrentDate();
+        }
+
+        private void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            String cellValue = (String)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+            if (cellValue == null)
+                cellValue = "";
+            switch (e.ColumnIndex)
+            {
+                case 0:
+                    currentCellType = CurrentCellType.Name;
+                    break;
+                case 1:
+                    currentCellType = CurrentCellType.Hours;
+                    break;
+                default:
+                    currentCellType = CurrentCellType.None;
+                    return;
+            }
+                
+            switch (currentCellType)
+            {
+                case CurrentCellType.Name:
+                    currentCellString = cellValue;
+                    break;
+                case CurrentCellType.Hours:
+                    if (!decimal.TryParse(cellValue, out currentCellDecimal))
+                        currentCellDecimal = 0m;
+                    break;
+            }
+        }
+
+        private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            CurrentCellType cellType;
+            String cellValue = (String)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+            if (cellValue == null)
+                cellValue = "";
+            decimal cellDecimal;
+            switch (e.ColumnIndex)
+            {
+                case 0:
+                    cellType = CurrentCellType.Name;
+                    break;
+                case 1:
+                    cellType = CurrentCellType.Hours;
+                    break;
+                default:
+                    cellType = CurrentCellType.None;
+                    return;
+            }
+            switch (cellType)
+            {
+                case CurrentCellType.Name:
+                    if (cellValue.Length == 0 && currentCellString.Length > 0)
+                    {
+                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = currentCellString;
+                    }
+                    else if (cellValue.Length > 0 && currentCellString.Length > 0 && String.Compare(cellValue, currentCellString) != 0)
+                    {
+                        if (employeeTotalList.ContainsKey(currentCellString))
+                        {
+                            employeeTotalList[cellValue] = employeeTotalList[currentCellString].Duplicate();
+                            employeeTotalList.Remove(currentCellString);
+                            Output($"Renamed Employee '{currentCellString}' to '{cellValue}'");
+                        }
+                        else
+                        {
+                            employeeTotalList[currentCellString] = new EmployeeTotal();
+                        }
+                    }
+                    currentCellString = "";
+                    break;
+                case CurrentCellType.Hours:
+                    if (!decimal.TryParse(cellValue, out cellDecimal))
+                    {
+                        if (currentCellDecimal > 0m)
+                            dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = currentCellDecimal;
+                    }
+                    else
+                    {
+                        String employeeName = (String)dataGridView1.Rows[e.RowIndex].Cells[0].Value;
+                        AddDay(new EmployeeDay { name = employeeName, day = RoundTime(dateTimePicker1.Value), hours = cellDecimal });
+                    }
+                    if (!decimal.TryParse((String)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value, out currentCellDecimal))
+                        currentCellDecimal = 0m;
+                    break;
+            }
+        }
+
+        private void contextMenuStripDataGridView_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (numericUpDownDays.Value != 1m)
+                e.Cancel = true;
+        }
+        private void deleteRowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedCells.Count > 0 || dataGridView1.SelectedRows.Count > 0)
+            {
+                String cellValue = "";
+                int rowIndex = -1;
+                if (dataGridView1.SelectedCells.Count == 1)
+                {
+                    cellValue = (String)dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells[0].Value;
+                    rowIndex = dataGridView1.SelectedCells[0].RowIndex;
+                }
+                if (dataGridView1.SelectedRows.Count == 1)
+                {
+                    cellValue = (String)dataGridView1.SelectedRows[0].Cells[0].Value;
+                    rowIndex = dataGridView1.SelectedRows[0].Index;
+                }
+                if (cellValue == null)
+                    cellValue = "";
+                if (cellValue.Length > 0 && rowIndex >= 0)
+                {
+                    if (dataGridView1.Rows[rowIndex].IsNewRow)
+                        return;
+                    if (employeeTotalList.ContainsKey(cellValue) && employeeTotalList[cellValue].employeeDays.Remove(RoundTime(dateTimePicker1.Value)))
+                    {
+                        Output($"Removed day for '{cellValue}' on {RoundTime(dateTimePicker1.Value).ToShortDateString()}");
+                        if (employeeTotalList[cellValue].employeeDays.Count == 0)
+                        {
+                            employeeTotalList.Remove(cellValue);
+                            Output($"Employee '{cellValue}' automatically removed with no days remaining");
+                        }
+                    }
+                    dataGridView1.Rows.RemoveAt(rowIndex);
+                    currentCellDecimal = 0m;
+                    currentCellString = "";
+                    currentCellType = CurrentCellType.None;
+                }
+            }
         }
 
         //Employee list tab
@@ -818,11 +998,24 @@ namespace Jamba_Tips
             {
                 return $"{name}♠{hours}♠{day.Month}♠{day.Day}";
             }
+
+            public EmployeeDay Duplicate()
+            {
+                return new EmployeeDay { name = name, day = day, hours = hours, calculatedTips = calculatedTips };
+            }
         }
 
         public class EmployeeTotal
         {
             public SortedList<DateTime, EmployeeDay> employeeDays = new SortedList<DateTime, EmployeeDay>();
+
+            public EmployeeTotal Duplicate()
+            {
+                EmployeeTotal employeeTotal = new EmployeeTotal();
+                foreach (KeyValuePair<DateTime, EmployeeDay> kvp in employeeDays)
+                    employeeTotal.employeeDays[kvp.Key] = kvp.Value.Duplicate();
+                return employeeTotal;
+            }
         }
     }
 }
