@@ -389,6 +389,11 @@ namespace Jamba_Tips
             CalculateCurrentDate();
         }
 
+        private void checkBoxWholeNumbers_CheckedChanged(object sender, EventArgs e)
+        {
+            CalculateCurrentDate();
+        }
+
         public void BalanceTips(ref decimal allocatedTips, ref SortedList<string, EmployeeDay> currentDay, decimal desiredTips)
         {
             if (allocatedTips == desiredTips)
@@ -399,24 +404,20 @@ namespace Jamba_Tips
                 sortedDays.Add(new EmployeeDay(kvpA.Value));
             sortedDays = sortedDays.OrderByDescending(x => x.hours).ToList();
 
-            if (allocatedTips > desiredTips)
+            while (allocatedTips > desiredTips)
             {
-                for (int i = 0; i < sortedDays.Count; i++)
+                for (int i = 0; i < sortedDays.Count && allocatedTips > desiredTips; i++)
                 {
                     currentDay[sortedDays[i].name].calculatedTips -= 0.01m;
                     allocatedTips -= 0.01m;
-                    if (allocatedTips <= desiredTips)
-                        break;
                 }
             }
-            else if (allocatedTips < desiredTips)
+            while (allocatedTips < desiredTips)
             {
-                for (int i = 0; i < sortedDays.Count; i++)
+                for (int i = 0; i < sortedDays.Count && allocatedTips < desiredTips; i++)
                 {
                     currentDay[sortedDays[i].name].calculatedTips += 0.01m;
                     allocatedTips += 0.01m;
-                    if (allocatedTips >= desiredTips)
-                        break;
                 }
             }
         }
@@ -480,6 +481,34 @@ namespace Jamba_Tips
                 LongOutput($"Allocated tips (${allocatedTips.ToString("N2")}) are equal to given tips (${tips.ToString("N2")})");
             }
 
+            if (checkBoxWholeNumbers.Checked)
+            {
+                remainder = 0m;
+                foreach (KeyValuePair<string, EmployeeDay> kvpA in currentDay)
+                {
+                    if (kvpA.Value.calculatedTips > Math.Floor(kvpA.Value.calculatedTips))
+                    {
+                        remainder += kvpA.Value.calculatedTips - Math.Floor(kvpA.Value.calculatedTips);
+                        kvpA.Value.calculatedTips = Math.Floor(kvpA.Value.calculatedTips);
+                    }
+                }
+                List<EmployeeDay> sortedDays = new List<EmployeeDay>();
+                foreach (KeyValuePair<string, EmployeeDay> kvpA in currentDay)
+                    sortedDays.Add(new EmployeeDay(kvpA.Value));
+                sortedDays = sortedDays.OrderByDescending(x => x.hours).ToList();
+                while (remainder >= 1m)
+                {
+                    for (int i = 0; i < sortedDays.Count && remainder >= 1m; i++)
+                    {
+                        currentDay[sortedDays[i].name].calculatedTips += 1m;
+                        remainder -= 1m;
+                    }
+                }
+            }
+            allocatedTips = 0m;
+            foreach (KeyValuePair<string, EmployeeDay> kvpA in currentDay)
+                allocatedTips += kvpA.Value.calculatedTips;
+
             builder.AppendLine($"Total Hours: {totalHours.ToString("N4").PadRight(12)}");
             builder.AppendLine($"Input Tips: {tips.ToString("N2").PadRight(12)}");
             builder.AppendLine($"Allocated Tips: {allocatedTips.ToString("N2").PadRight(12)}");
@@ -488,14 +517,15 @@ namespace Jamba_Tips
             foreach (KeyValuePair<string, EmployeeDay> kvpA in currentDay)
             {
                 percentage = kvpA.Value.hours / totalHours;
-                dataGridView1.Rows.Add(new string[] { kvpA.Key, kvpA.Value.hours.ToString("N4"), $"${kvpA.Value.calculatedTips.ToString("N2")}" });
-                builder.AppendLine($"{kvpA.Key.PadRight(35)} {kvpA.Value.hours.ToString("N4").PadRight(12)} ${kvpA.Value.calculatedTips.ToString("N2")}");
+                dataGridView1.Rows.Add(new string[] { kvpA.Key, kvpA.Value.hours.ToString("N4"), $"${kvpA.Value.calculatedTips:N2}" });
+                builder.AppendLine($"{kvpA.Key.PadRight(35)} {kvpA.Value.hours.ToString("N4").PadRight(12)} ${kvpA.Value.calculatedTips:N2}");
                 builder.AppendLine($"    {employeeSubInfo[kvpA.Key]}");
             }
+            remainder = tips - allocatedTips;
 
             richTextBoxOutput.Text = builder.ToString().Trim();
-            labelHourTotal.Text = $"Total Hours: {totalHours.ToString("N4")}";
-            labelTotalTips.Text = $"Counted Tips: ${allocatedTips.ToString("N2")}";
+            labelHourTotal.Text = $"Total Hours: {totalHours:N4}";
+            labelTotalTips.Text = $"Counted Tips: ${allocatedTips:N2}{(remainder != 0m ? $", Remainder: ${remainder:N2}" : "")}";
         }
 
         private void numericUpDownTips_ValueChanged(object sender, EventArgs e)
