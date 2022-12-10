@@ -36,9 +36,9 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.label1 = new System.Windows.Forms.Label();
             this.listBox1 = new System.Windows.Forms.ListBox();
-            this.timerParentReader = new System.Windows.Forms.Timer(this.components);
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.buttonTestEmployees = new System.Windows.Forms.Button();
+            this.timerParentReader = new System.Windows.Forms.Timer(this.components);
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -53,7 +53,7 @@
             this.richTextBox1.Location = new System.Drawing.Point(8, 140);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(996, 553);
+            this.richTextBox1.Size = new System.Drawing.Size(996, 529);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             // 
@@ -66,7 +66,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1020, 725);
+            this.tabControl1.Size = new System.Drawing.Size(1020, 701);
             this.tabControl1.TabIndex = 1;
             // 
             // tabPage1
@@ -75,7 +75,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1012, 699);
+            this.tabPage1.Size = new System.Drawing.Size(1012, 675);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Output";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -111,12 +111,6 @@
             this.listBox1.Size = new System.Drawing.Size(295, 667);
             this.listBox1.TabIndex = 0;
             // 
-            // timerParentReader
-            // 
-            this.timerParentReader.Enabled = true;
-            this.timerParentReader.Interval = 1000;
-            this.timerParentReader.Tick += new System.EventHandler(this.timerParentReader_Tick);
-            // 
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.buttonTestEmployees);
@@ -137,11 +131,17 @@
             this.buttonTestEmployees.UseVisualStyleBackColor = true;
             this.buttonTestEmployees.Click += new System.EventHandler(this.buttonTestEmployees_Click);
             // 
+            // timerParentReader
+            // 
+            this.timerParentReader.Enabled = true;
+            this.timerParentReader.Interval = 1000;
+            this.timerParentReader.Tick += new System.EventHandler(this.timerParentReader_Tick);
+            // 
             // DebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1020, 725);
+            this.ClientSize = new System.Drawing.Size(1020, 701);
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DebugForm";

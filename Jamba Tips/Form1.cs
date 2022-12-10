@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Printing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 
@@ -9,7 +12,7 @@ namespace Jamba_Tips
 {
     public partial class Form1 : Form
     {
-        //Variables
+        #region Variables
 
         public SortedList<string, EmployeeTotal> employeeTotalList = new SortedList<string, EmployeeTotal>();
 
@@ -23,9 +26,11 @@ namespace Jamba_Tips
 
         public SortedList<string, Stopwatch> timerList = new SortedList<string, Stopwatch>();
 
+        public List<ColorScheme> colorSchemes = new List<ColorScheme>();
+
         public string[] monthsInYear = new string[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
-        public string lastClipBoard = "", currentCellString = "";
+        public string lastClipBoard = "", currentCellString = "", currentScheme = "";
 
         public decimal currentCellDecimal = 0m;
 
@@ -38,7 +43,10 @@ namespace Jamba_Tips
             None
         };
 
-        //Main functions
+        #endregion
+
+
+        #region Initialization
 
         public Form1()
         {
@@ -48,6 +56,11 @@ namespace Jamba_Tips
         private void Form1_Load(object sender, EventArgs e)
         {
             loading = true;
+            labelVersion.Text = $"Version: {Assembly.GetExecutingAssembly().GetName().Version}";
+            LoadColorSchemes();
+            PaintApplication(Properties.Settings.Default.ColorScheme);
+            comboBoxColorSchemes.Text = Properties.Settings.Default.ColorScheme;
+
             foreach (string str in Properties.Settings.Default.BlacklistedEmployees)
                 blacklistedEmployees.Add(str);
             LoadEmployees();
@@ -71,10 +84,125 @@ namespace Jamba_Tips
             loading = false;
         }
 
-        public void SaveEmployees()
+        private void LoadColorSchemes()
+        {
+            colorSchemes.Add(new ColorScheme("Black & Gold",
+                System.Drawing.Color.FromArgb(255, 0, 0, 0),
+                System.Drawing.Color.FromArgb(255, 0, 0, 0),
+                System.Drawing.Color.FromArgb(255, 0, 0, 0),
+                System.Drawing.Color.FromArgb(255, 255, 215, 0)));
+
+            colorSchemes.Add(new ColorScheme("Autumn 1",
+                System.Drawing.ColorTranslator.FromHtml("#3F0D12"),
+                System.Drawing.ColorTranslator.FromHtml("#A71D31"),
+                System.Drawing.ColorTranslator.FromHtml("#51291E"),
+                System.Drawing.ColorTranslator.FromHtml("#D5BF86")));
+
+            colorSchemes.Add(new ColorScheme("Fruity",
+                System.Drawing.ColorTranslator.FromHtml("#23F0C7"),
+                System.Drawing.ColorTranslator.FromHtml("#EF767A"),
+                System.Drawing.ColorTranslator.FromHtml("#BE5A38"),
+                System.Drawing.ColorTranslator.FromHtml("#6457A6")));
+
+            colorSchemes.Add(new ColorScheme("Night-time Forest",
+                System.Drawing.ColorTranslator.FromHtml("#2E6171"),
+                System.Drawing.ColorTranslator.FromHtml("#556F7A"),
+                System.Drawing.ColorTranslator.FromHtml("#815E5B"),
+                System.Drawing.ColorTranslator.FromHtml("#B79FAD")));
+
+            colorSchemes.Add(new ColorScheme("Light Pumpkin",
+                System.Drawing.ColorTranslator.FromHtml("#FA9F42"),
+                System.Drawing.ColorTranslator.FromHtml("#ACE4AA"),
+                System.Drawing.ColorTranslator.FromHtml("#840032"),
+                System.Drawing.ColorTranslator.FromHtml("#02040F")));
+
+            colorSchemes.Add(new ColorScheme("Clear Sky",
+                System.Drawing.ColorTranslator.FromHtml("#119DA4"),
+                System.Drawing.ColorTranslator.FromHtml("#0C7489"),
+                System.Drawing.ColorTranslator.FromHtml("#06BCC1"),
+                System.Drawing.ColorTranslator.FromHtml("#040404")));
+
+            colorSchemes.Add(new ColorScheme("Space",
+                System.Drawing.ColorTranslator.FromHtml("#0F1108"),
+                System.Drawing.ColorTranslator.FromHtml("#241909"),
+                System.Drawing.ColorTranslator.FromHtml("#262626"),
+                System.Drawing.ColorTranslator.FromHtml("#CAD8DE")));
+
+            colorSchemes.Add(new ColorScheme("Warm",
+                System.Drawing.ColorTranslator.FromHtml("#3A3335"),
+                System.Drawing.ColorTranslator.FromHtml("#D81E5B"),
+                System.Drawing.ColorTranslator.FromHtml("#F0544F"),
+                System.Drawing.ColorTranslator.FromHtml("#FDF0D5")));
+
+            colorSchemes.Add(new ColorScheme("Moonrise",
+                System.Drawing.ColorTranslator.FromHtml("#0F1108"),
+                System.Drawing.ColorTranslator.FromHtml("#9882AC"),
+                System.Drawing.ColorTranslator.FromHtml("#73648A"),
+                System.Drawing.ColorTranslator.FromHtml("#CAD8DE")));
+
+            colorSchemes.Add(new ColorScheme("Summer 1",
+                System.Drawing.ColorTranslator.FromHtml("#C84630"),
+                System.Drawing.ColorTranslator.FromHtml("#235789"),
+                System.Drawing.ColorTranslator.FromHtml("#C1292E"),
+                System.Drawing.ColorTranslator.FromHtml("#F1D302")));
+
+            colorSchemes.Add(new ColorScheme("Garden",
+                System.Drawing.ColorTranslator.FromHtml("#363537"),
+                System.Drawing.ColorTranslator.FromHtml("#EF2D56"),
+                System.Drawing.ColorTranslator.FromHtml("#302F4D"),
+                System.Drawing.ColorTranslator.FromHtml("#8CD867")));
+
+            colorSchemes.Add(new ColorScheme("Dusk",
+                System.Drawing.ColorTranslator.FromHtml("#484A47"),
+                System.Drawing.ColorTranslator.FromHtml("#5C6D70"),
+                System.Drawing.ColorTranslator.FromHtml("#A37774"),
+                System.Drawing.ColorTranslator.FromHtml("#E88873")));
+
+            colorSchemes.Add(new ColorScheme("Creekside",
+                System.Drawing.ColorTranslator.FromHtml("#1A281F"),
+                System.Drawing.ColorTranslator.FromHtml("#635255"),
+                System.Drawing.ColorTranslator.FromHtml("#CE7B91"),
+                System.Drawing.ColorTranslator.FromHtml("#C0E8F9")));
+
+            colorSchemes.Add(new ColorScheme("Sweet",
+                System.Drawing.ColorTranslator.FromHtml("#26547C"),
+                System.Drawing.ColorTranslator.FromHtml("#EF476F"),
+                System.Drawing.ColorTranslator.FromHtml("#401F3E"),
+                System.Drawing.ColorTranslator.FromHtml("#EDF4ED")));
+
+            colorSchemes.Add(new ColorScheme("Desert Oasis",
+                System.Drawing.ColorTranslator.FromHtml("#0A210F"),
+                System.Drawing.ColorTranslator.FromHtml("#14591D"),
+                System.Drawing.ColorTranslator.FromHtml("#99AA38"),
+                System.Drawing.ColorTranslator.FromHtml("#E1E289")));
+
+            colorSchemes.Add(new ColorScheme("Earth & Stone",
+                System.Drawing.ColorTranslator.FromHtml("#463F3A"),
+                System.Drawing.ColorTranslator.FromHtml("#8A817C"),
+                System.Drawing.ColorTranslator.FromHtml("#BCB8B1"),
+                System.Drawing.ColorTranslator.FromHtml("#F4F3EE")));
+
+            colorSchemes.Add(new ColorScheme("Evening Lights",
+                System.Drawing.ColorTranslator.FromHtml("#0E1116"),
+                System.Drawing.ColorTranslator.FromHtml("#374A67"),
+                System.Drawing.ColorTranslator.FromHtml("#595758"),
+                System.Drawing.ColorTranslator.FromHtml("#9E7B9B")));
+
+
+            foreach (ColorScheme colorScheme in colorSchemes)
+            {
+                comboBoxColorSchemes.Items.Add(colorScheme.name);
+            }
+        }
+
+        #endregion
+
+
+        #region Main Functions
+
+        public void SaveData()
         {
             Record("Saving Data");
-            Output("Saving before close...");
             Properties.Settings.Default.EmployeeDays.Clear();
 
             foreach (KeyValuePair<string, EmployeeTotal> kvpA in employeeTotalList)
@@ -138,30 +266,6 @@ namespace Jamba_Tips
             return new DateTime(DateTime.Now.Year, time.Month, time.Day);
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            SaveEmployees();
-        }
-
-        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            switch (tabControl1.SelectedIndex)
-            {
-                case 0:
-                    SetAutoFill();
-                    break;
-                case 1:
-                    CalculateCurrentDate();
-                    break;
-                case 2:
-                    RefreshEmployeeList();
-                    break;
-                case 3:
-                    RefreshDayList();
-                    break;
-            }
-        }
-
         public void Output(string text)
         {
             if (listBoxOutput.InvokeRequired)
@@ -201,6 +305,130 @@ namespace Jamba_Tips
             }
         }
 
+        public bool CompareStrings(string a, string b)
+        {
+            return a.Length == b.Length && String.Compare(a, b) == 0;
+        }
+
+        public void StartAutosave()
+        {
+            timerAutoSave.Stop();
+            timerAutoSave.Start();
+        }
+
+        public void PaintControl(Control control, ColorScheme scheme)
+        {
+            control.ForeColor = scheme.h4;
+
+            if ((control is Panel && !(control is TabControl) && !(control is TabPage)) || control is ListBox || control is ComboBox || control is TextBox || control is RichTextBox)
+            {
+                control.BackColor = scheme.h1;
+            }
+            if (control is DataGridView)
+            {
+                DataGridView dgv = (DataGridView)control;
+                dgv.BackgroundColor = scheme.h1;
+                dgv.DefaultCellStyle.BackColor = scheme.h1;
+                dgv.DefaultCellStyle.ForeColor = scheme.h4;
+                dgv.RowHeadersDefaultCellStyle.BackColor = scheme.h1;
+                dgv.RowHeadersDefaultCellStyle.ForeColor = scheme.h4;
+                dgv.RowsDefaultCellStyle.BackColor = scheme.h1;
+                dgv.RowsDefaultCellStyle.ForeColor = scheme.h4;
+                dgv.AlternatingRowsDefaultCellStyle.BackColor = scheme.h1;
+                dgv.AlternatingRowsDefaultCellStyle.ForeColor = scheme.h4;
+                dgv.ColumnHeadersDefaultCellStyle.BackColor = scheme.h1;
+                dgv.ColumnHeadersDefaultCellStyle.ForeColor = scheme.h4;
+            }
+            if (control is TableLayoutPanel)
+            {
+                control.BackColor = scheme.h3;
+            }
+            if (control is TabControl)
+            {
+                control.BackColor = scheme.h2;
+                foreach (TabPage tabPage in ((TabControl)control).TabPages)
+                {
+                    tabPage.BackColor = scheme.h2;
+                    tabPage.ForeColor = scheme.h4;
+                }
+            }
+            foreach (Control child in control.Controls)
+            {
+                PaintControl(child, scheme);
+            }
+        }
+
+        public void PaintApplication(string schemeName)
+        {
+            ColorScheme scheme;
+            if (!CompareStrings(schemeName, currentScheme) && GetColorScheme(schemeName, out scheme))
+            {
+                Properties.Settings.Default.ColorScheme = schemeName;
+                currentScheme = schemeName;
+                Properties.Settings.Default.Save();
+                this.BackColor = scheme.h1;
+                this.ForeColor = scheme.h4;
+                foreach (Control control in this.Controls)
+                {
+                    PaintControl(control, scheme);
+                }
+            }
+        }
+
+        public bool GetColorScheme(string schemeName, out ColorScheme colorScheme)
+        {
+            foreach (ColorScheme scheme in colorSchemes)
+                if (CompareStrings(scheme.name, schemeName))
+                {
+                    colorScheme = scheme;
+                    return true;
+                }
+            colorScheme = new ColorScheme("", System.Drawing.Color.Black, System.Drawing.Color.Black,
+                System.Drawing.Color.Black, System.Drawing.Color.Black);
+            return false;
+        }
+
+        #endregion
+
+
+        #region Form1 Controls
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Output("Saving before close...");
+            SaveData();
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (tabControl1.SelectedIndex)
+            {
+                case 0:
+                    SetAutoFill();
+                    break;
+                case 1:
+                    CalculateCurrentDate();
+                    break;
+                case 2:
+                    RefreshEmployeeList();
+                    break;
+                case 3:
+                    RefreshDayList();
+                    break;
+            }
+        }
+
+        private void timerAutoSave_Tick(object sender, EventArgs e)
+        {
+            timerAutoSave.Stop();
+            SaveData();
+        }
+
+        #endregion
+
+
+        #region Data Entry Tab
+
         private void timerClipboardMonitor_Tick(object sender, EventArgs e)
         {
             if (checkBoxClipboardMonitor.Checked && Clipboard.ContainsText())
@@ -208,8 +436,7 @@ namespace Jamba_Tips
                 string clipboardText = Clipboard.GetText();
                 if (clipboardText != String.Empty && !CompareStrings(clipboardText, lastClipBoard))
                 {
-                    System.IO.Stream str = Properties.Resources.collierhs_colinlib__elevator_ding;
-                    System.Media.SoundPlayer snd = new System.Media.SoundPlayer(str);
+                    System.Media.SoundPlayer snd = new System.Media.SoundPlayer(AlertPing());
                     snd.Play();
                     ParseStringData(clipboardText);
                     lastClipBoard = clipboardText;
@@ -217,9 +444,21 @@ namespace Jamba_Tips
             }
         }
 
-        public bool CompareStrings(string a, string b)
+        private System.IO.Stream AlertPing()
         {
-            return a.Length == b.Length && String.Compare(a, b) == 0;
+            Random rnd = new Random();
+
+            int key = rnd.Next(1, 40);
+
+            switch (key)
+            {
+                case 7:
+                    return Properties.Resources._343490__mafon2__comical_screams;
+                case 21:
+                    return Properties.Resources.he;
+                default:
+                    return Properties.Resources.collierhs_colinlib__elevator_ding;
+            }
         }
 
         public void ParseStringData(string text)
@@ -361,28 +600,33 @@ namespace Jamba_Tips
                 {
                     Output($"Updated record for {day.name} with {day.hours} hours on {day.day.Month}/{day.day.Day}");
                 }
+                StartAutosave();
             }
             employeeTotalList[day.name].employeeDays[day.day] = new EmployeeDay(day);
         }
 
         private void buttonAddEmployeeManual_Click(object sender, EventArgs e)
         {
-            if (textBoxEmployeeNameManual.Text.Length > 0)
+            if (comboBoxEmployeeName.Text.Length > 0)
             {
-                AddDay(new EmployeeDay { name = textBoxEmployeeNameManual.Text, day = RoundTime(dateTimePickerEmployeeManual.Value), hours = numericUpDownEmployeeTipsManual.Value });
-                textBoxEmployeeNameManual.Text = "";
+                AddDay(new EmployeeDay { name = comboBoxEmployeeName.Text, day = RoundTime(dateTimePickerEmployeeManual.Value), hours = numericUpDownEmployeeTipsManual.Value });
+                comboBoxEmployeeName.Text = "";
                 SetAutoFill();
             }
         }
 
         public void SetAutoFill()
         {
-            textBoxEmployeeNameManual.AutoCompleteCustomSource.Clear();
-            textBoxEmployeeNameManual.AutoCompleteCustomSource.AddRange(blacklistedEmployees.ToArray());
-            textBoxEmployeeNameManual.AutoCompleteCustomSource.AddRange(employeeTotalList.Keys.ToArray());
+            comboBoxEmployeeName.AutoCompleteCustomSource.Clear();
+            comboBoxEmployeeName.AutoCompleteCustomSource.AddRange(employeeTotalList.Keys.ToArray());
+            comboBoxEmployeeName.Items.Clear();
+            comboBoxEmployeeName.Items.AddRange(employeeTotalList.Keys.ToArray());
         }
 
-        //Calculator tab
+        #endregion
+
+
+        #region Calculator Tab
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
@@ -396,7 +640,7 @@ namespace Jamba_Tips
 
         public void BalanceTips(ref decimal allocatedTips, ref SortedList<string, EmployeeDay> currentDay, decimal desiredTips)
         {
-            if (allocatedTips == desiredTips)
+            if (allocatedTips == desiredTips || currentDay.Count == 0)
                 return;
 
             List<EmployeeDay> sortedDays = new List<EmployeeDay>();
@@ -404,20 +648,24 @@ namespace Jamba_Tips
                 sortedDays.Add(new EmployeeDay(kvpA.Value));
             sortedDays = sortedDays.OrderByDescending(x => x.hours).ToList();
 
-            while (allocatedTips > desiredTips)
+            int reps = 0;
+            while (allocatedTips > desiredTips && reps < 5000)
             {
                 for (int i = 0; i < sortedDays.Count && allocatedTips > desiredTips; i++)
                 {
                     currentDay[sortedDays[i].name].calculatedTips -= 0.01m;
                     allocatedTips -= 0.01m;
+                    reps++;
                 }
             }
-            while (allocatedTips < desiredTips)
+            reps = 0;
+            while (allocatedTips < desiredTips && reps < 5000)
             {
                 for (int i = 0; i < sortedDays.Count && allocatedTips < desiredTips; i++)
                 {
                     currentDay[sortedDays[i].name].calculatedTips += 0.01m;
                     allocatedTips += 0.01m;
+                    reps++;
                 }
             }
         }
@@ -453,6 +701,8 @@ namespace Jamba_Tips
 
             dataGridView1.Rows.Clear();
 
+            if (currentDay.Count == 0) allocatedTips = tips;
+
             foreach (KeyValuePair<string, EmployeeDay> kvpA in currentDay)
             {
                 percentage = kvpA.Value.hours / totalHours;
@@ -481,7 +731,7 @@ namespace Jamba_Tips
                 LongOutput($"Allocated tips (${allocatedTips.ToString("N2")}) are equal to given tips (${tips.ToString("N2")})");
             }
 
-            if (checkBoxWholeNumbers.Checked)
+            if (checkBoxWholeNumbers.Checked && currentDay.Count > 0)
             {
                 remainder = 0m;
                 foreach (KeyValuePair<string, EmployeeDay> kvpA in currentDay)
@@ -496,12 +746,14 @@ namespace Jamba_Tips
                 foreach (KeyValuePair<string, EmployeeDay> kvpA in currentDay)
                     sortedDays.Add(new EmployeeDay(kvpA.Value));
                 sortedDays = sortedDays.OrderByDescending(x => x.hours).ToList();
-                while (remainder >= 1m)
+                int reps = 0;
+                while (remainder >= 1m && reps < 5000)
                 {
                     for (int i = 0; i < sortedDays.Count && remainder >= 1m; i++)
                     {
                         currentDay[sortedDays[i].name].calculatedTips += 1m;
                         remainder -= 1m;
+                        reps++;
                     }
                 }
             }
@@ -537,7 +789,10 @@ namespace Jamba_Tips
                     dailyTipValues[key] = new SortedList<int, decimal>();
                 dailyTipValues[key][(int)numericUpDownDays.Value] = (decimal)numericUpDownTips.Value;
                 if (!loading)
+                {
+                    StartAutosave();
                     CalculateCurrentDate();
+                }
             }
             else
             {
@@ -546,6 +801,7 @@ namespace Jamba_Tips
                     dailyTipValues[key].Remove((int)numericUpDownDays.Value);
                     if (dailyTipValues[key].Count == 0)
                         dailyTipValues.Remove(key);
+                    StartAutosave();
                 }
             }
         }
@@ -690,6 +946,7 @@ namespace Jamba_Tips
             if (numericUpDownDays.Value != 1m)
                 e.Cancel = true;
         }
+
         private void deleteRowToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedCells.Count > 0 || dataGridView1.SelectedRows.Count > 0)
@@ -729,7 +986,10 @@ namespace Jamba_Tips
             }
         }
 
-        //Employee list tab
+        #endregion
+
+
+        #region Employee List Tab
 
         private void listBoxEmployees_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -770,6 +1030,7 @@ namespace Jamba_Tips
                 {
                     employeeTotalList.Remove(listBoxEmployees.SelectedItem.ToString());
                     listBoxEmployees.Items.RemoveAt(listBoxEmployees.SelectedIndex);
+                    StartAutosave();
                 }
                 catch { }
             }
@@ -796,6 +1057,7 @@ namespace Jamba_Tips
                         employeeTotalList.Remove(nameKey);
                         listBoxEmployees.Items.RemoveAt(listBoxEmployees.SelectedIndex);
                     }
+                    StartAutosave();
                 }
             }
         }
@@ -838,10 +1100,14 @@ namespace Jamba_Tips
                 {
                     blacklistedEmployees.Add(nameKey);
                 }
+                StartAutosave();
             }
         }
 
-        //Days list tab
+        #endregion
+
+
+        #region Days List Tab
 
         public void RefreshDayList()
         {
@@ -877,6 +1143,7 @@ namespace Jamba_Tips
             {
                 RemoveDay(ConvertLine(listBoxDays.SelectedItem.ToString()));
                 listBoxDays.Items.RemoveAt(listBoxDays.SelectedIndex);
+                StartAutosave();
             }
         }
 
@@ -917,6 +1184,7 @@ namespace Jamba_Tips
                     {
                         listBoxDays.Items.RemoveAt(listBoxDays.SelectedIndex);
                     }
+                    StartAutosave();
                 }
             }
         }
@@ -966,7 +1234,10 @@ namespace Jamba_Tips
             }
         }
 
-        //Settings tab
+        #endregion
+
+
+        #region Settings Tab
 
         private void button7_Click(object sender, EventArgs e)
         {
@@ -1005,7 +1276,43 @@ namespace Jamba_Tips
             catch { }
         }
 
-        //Classes
+        private void buttonUpdate_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/nicknds/Jamba-Tips/releases");
+        }
+
+        private void comboBoxColorSchemes_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!loading && comboBoxColorSchemes.SelectedItem != null && comboBoxColorSchemes.Text.Length > 0)
+            {
+                PaintApplication(comboBoxColorSchemes.Text);
+            }
+        }
+
+        #endregion
+
+
+        #region Classes
+
+        public struct ColorScheme
+        {
+            public System.Drawing.Color[] colors;
+            public string name;
+            public System.Drawing.Color h1 { get { return colors[0]; } }
+            public System.Drawing.Color h2 { get { return colors[1]; } }
+            public System.Drawing.Color h3 { get { return colors[2]; } }
+            public System.Drawing.Color h4 { get { return colors[3]; } }
+
+            public ColorScheme(string name, System.Drawing.Color color1, System.Drawing.Color color2, System.Drawing.Color color3, System.Drawing.Color color4)
+            {
+                this.name = name;
+                colors = new System.Drawing.Color[4];
+                colors[0] = color1;
+                colors[1] = color2;
+                colors[2] = color3;
+                colors[3] = color4;
+            }
+        }
 
         public class EmployeeDay
         {
@@ -1056,5 +1363,7 @@ namespace Jamba_Tips
                 return employeeTotal;
             }
         }
+
+        #endregion
     }
 }
