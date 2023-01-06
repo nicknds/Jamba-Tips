@@ -1,0 +1,15 @@
+Added
+	Preset color schemes
+	Auto-save
+	Combobox with drop-down list for manual data entry
+	Update button linked to Github releases
+	Version output for update reference
+Fixed
+	Calculator will catch distributing tips to zero employees
+Changed
+	Changed font
+	Increased font size
+	Adjusted layout and control sizing
+	Adjusted minimum form size
+	Grouped some controls into panels
+	Further organized code into regions

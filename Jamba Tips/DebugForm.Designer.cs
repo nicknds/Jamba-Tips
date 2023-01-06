@@ -50,10 +50,10 @@
             this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBox1.Location = new System.Drawing.Point(8, 140);
+            this.richTextBox1.Location = new System.Drawing.Point(8, 6);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(996, 529);
+            this.richTextBox1.Size = new System.Drawing.Size(916, 611);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             // 
@@ -66,7 +66,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1020, 701);
+            this.tabControl1.Size = new System.Drawing.Size(940, 649);
             this.tabControl1.TabIndex = 1;
             // 
             // tabPage1
@@ -75,7 +75,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1012, 675);
+            this.tabPage1.Size = new System.Drawing.Size(932, 623);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Output";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -87,7 +87,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1012, 699);
+            this.tabPage2.Size = new System.Drawing.Size(932, 623);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Timers";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -108,7 +108,7 @@
             this.listBox1.FormattingEnabled = true;
             this.listBox1.Location = new System.Drawing.Point(6, 19);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(295, 667);
+            this.listBox1.Size = new System.Drawing.Size(295, 615);
             this.listBox1.TabIndex = 0;
             // 
             // tabPage3
@@ -116,13 +116,14 @@
             this.tabPage3.Controls.Add(this.buttonTestEmployees);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(1012, 699);
+            this.tabPage3.Size = new System.Drawing.Size(932, 623);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Testing";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // buttonTestEmployees
             // 
+            this.buttonTestEmployees.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonTestEmployees.Location = new System.Drawing.Point(8, 14);
             this.buttonTestEmployees.Name = "buttonTestEmployees";
             this.buttonTestEmployees.Size = new System.Drawing.Size(96, 23);
@@ -141,11 +142,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1020, 701);
+            this.ClientSize = new System.Drawing.Size(940, 649);
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DebugForm";
             this.Text = "Debug";
+            this.Load += new System.EventHandler(this.DebugForm_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);

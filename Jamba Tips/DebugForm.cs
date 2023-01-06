@@ -101,5 +101,12 @@ namespace Jamba_Tips
                 }
             }
         }
+
+        private void DebugForm_Load(object sender, EventArgs e)
+        {
+            Form1.ColorScheme colorScheme;
+            if (parent.GetColorScheme(Properties.Settings.Default.ColorScheme, out colorScheme))
+                Form1.PaintApplication(this, colorScheme);
+        }
     }
 }

@@ -20,9 +20,13 @@ namespace Jamba_Tips
 
         public List<string> blacklistedEmployees = new List<string>();
 
+        public HashSet<string> filters = new HashSet<string>();
+
         public bool loading = false;
 
         public DebugForm debugForm;
+
+        public DataFilterForm dataFilterForm;
 
         public SortedList<string, Stopwatch> timerList = new SortedList<string, Stopwatch>();
 
@@ -43,6 +47,13 @@ namespace Jamba_Tips
             None
         };
 
+        public enum ExtractionStatus
+        {
+            Success,
+            Failure,
+            Filtered
+        };
+
         #endregion
 
 
@@ -58,7 +69,7 @@ namespace Jamba_Tips
             loading = true;
             labelVersion.Text = $"Version: {Assembly.GetExecutingAssembly().GetName().Version}";
             LoadColorSchemes();
-            PaintApplication(Properties.Settings.Default.ColorScheme);
+            PaintThisApplication(Properties.Settings.Default.ColorScheme);
             comboBoxColorSchemes.Text = Properties.Settings.Default.ColorScheme;
 
             foreach (string str in Properties.Settings.Default.BlacklistedEmployees)
@@ -80,6 +91,8 @@ namespace Jamba_Tips
                 if (clipboardText != String.Empty && !CompareStrings(clipboardText, lastClipBoard))
                     lastClipBoard = clipboardText;
             }
+
+            UpdateFilters();
 
             loading = false;
         }
@@ -316,7 +329,7 @@ namespace Jamba_Tips
             timerAutoSave.Start();
         }
 
-        public void PaintControl(Control control, ColorScheme scheme)
+        public static void PaintControl(Control control, ColorScheme scheme)
         {
             control.ForeColor = scheme.h4;
 
@@ -358,7 +371,7 @@ namespace Jamba_Tips
             }
         }
 
-        public void PaintApplication(string schemeName)
+        public void PaintThisApplication(string schemeName)
         {
             ColorScheme scheme;
             if (!CompareStrings(schemeName, currentScheme) && GetColorScheme(schemeName, out scheme))
@@ -366,12 +379,17 @@ namespace Jamba_Tips
                 Properties.Settings.Default.ColorScheme = schemeName;
                 currentScheme = schemeName;
                 Properties.Settings.Default.Save();
-                this.BackColor = scheme.h1;
-                this.ForeColor = scheme.h4;
-                foreach (Control control in this.Controls)
-                {
-                    PaintControl(control, scheme);
-                }
+                PaintApplication(this, scheme);
+            }
+        }
+
+        public static void PaintApplication(Form form, ColorScheme scheme)
+        {
+            form.BackColor = scheme.h1;
+            form.ForeColor = scheme.h4;
+            foreach (Control control in form.Controls)
+            {
+                PaintControl(control, scheme);
             }
         }
 
@@ -386,6 +404,13 @@ namespace Jamba_Tips
             colorScheme = new ColorScheme("", System.Drawing.Color.Black, System.Drawing.Color.Black,
                 System.Drawing.Color.Black, System.Drawing.Color.Black);
             return false;
+        }
+
+        public void UpdateFilters()
+        {
+            filters.Clear();
+            foreach (string filter in Properties.Settings.Default.Filters)
+                filters.Add(filter);
         }
 
         #endregion
@@ -436,28 +461,11 @@ namespace Jamba_Tips
                 string clipboardText = Clipboard.GetText();
                 if (clipboardText != String.Empty && !CompareStrings(clipboardText, lastClipBoard))
                 {
-                    System.Media.SoundPlayer snd = new System.Media.SoundPlayer(AlertPing());
+                    System.Media.SoundPlayer snd = new System.Media.SoundPlayer(Properties.Resources.collierhs_colinlib__elevator_ding);
                     snd.Play();
                     ParseStringData(clipboardText);
                     lastClipBoard = clipboardText;
                 }
-            }
-        }
-
-        private System.IO.Stream AlertPing()
-        {
-            Random rnd = new Random();
-
-            int key = rnd.Next(1, 40);
-
-            switch (key)
-            {
-                case 7:
-                    return Properties.Resources._343490__mafon2__comical_screams;
-                case 21:
-                    return Properties.Resources.he;
-                default:
-                    return Properties.Resources.collierhs_colinlib__elevator_ding;
             }
         }
 
@@ -471,6 +479,7 @@ namespace Jamba_Tips
                     keyTimeCardStart = "Allocation  (tax)",
                     keyTimeCardEnd = "Approve By Date";
                 string[] lineArray;
+                bool filteredDay = false;
                 List<string> rowList = new List<string>();
 
                 //Get name
@@ -495,14 +504,27 @@ namespace Jamba_Tips
                 //LongOutput($"Week B: {weekB}");
 
                 for (int i = 1; i <= 7; i++)
-                    ExtractDay(ref weekA, name);
+                {
+                    if (ExtractDay(ref weekA, name) == ExtractionStatus.Filtered)
+                        filteredDay = true;
+                }
                 for (int i = 1; i <= 7; i++)
-                    ExtractDay(ref weekB, name);
+                {
+                    if (ExtractDay(ref weekB, name) == ExtractionStatus.Filtered)
+                        filteredDay = true;
+                }
+
+                //Play sound if a day was filtered
+                if (filteredDay)
+                {
+                    System.Media.SoundPlayer snd = new System.Media.SoundPlayer(Properties.Resources.kizilsungur__sweetalertsound4);
+                    snd.Play();
+                }
             }
             catch { LongOutput("Error caught parsing clipboard data. "); }
         }
 
-        public void ExtractDay(ref string text, string name)
+        public ExtractionStatus ExtractDay(ref string text, string name)
         {
             try
             {
@@ -513,6 +535,7 @@ namespace Jamba_Tips
                 string currentLine, finalKey = "Weekly Totals";
                 decimal parsedHours = 0m, bestHours = 0m;
                 DateTime parsedDate;
+                bool filterTriggered = false;
 
                 for (int i = 1; i < dayKeys.Length; i++)
                 {
@@ -545,15 +568,32 @@ namespace Jamba_Tips
                         lineArray = lineArray[lineArray.Length - 1].Split('	');
                         for (int i = 0; i < lineArray.Length; i++)
                         {
+                            if (IsFiltered(lineArray[i]))
+                            {
+                                filterTriggered = true;
+                                continue;
+                            }
                             if (decimal.TryParse(lineArray[i], out parsedHours) && parsedHours > 0m)
                                 bestHours = parsedHours;
                         }
                         if (bestHours > 0m)
-                            AddDay(new EmployeeDay() { name = name, day = parsedDate, hours = bestHours });
+                        {
+                            if (!filterTriggered)
+                            {
+                                AddDay(new EmployeeDay() { name = name, day = parsedDate, hours = bestHours });
+                                return ExtractionStatus.Success;
+                            }
+                            else
+                            {
+                                Output($"ALERT: Filtered Day For Employee '{name}' On {parsedDate.ToShortDateString()} With {bestHours.ToString("N2")} Hours");
+                                return ExtractionStatus.Filtered;
+                            }
+                        }
                     }
                 }
             }
             catch { }
+            return ExtractionStatus.Failure;
         }
 
         public bool GetDate(string text, out DateTime date)
@@ -621,6 +661,18 @@ namespace Jamba_Tips
             comboBoxEmployeeName.AutoCompleteCustomSource.AddRange(employeeTotalList.Keys.ToArray());
             comboBoxEmployeeName.Items.Clear();
             comboBoxEmployeeName.Items.AddRange(employeeTotalList.Keys.ToArray());
+        }
+
+        public bool IsFiltered(string data)
+        {
+            if (data.Length > 0)
+            {
+                string lowData = data.ToLower();
+                foreach (string filter in filters)
+                    if (lowData.Contains(filter))
+                        return true;
+            }
+            return false;
         }
 
         #endregion
@@ -986,6 +1038,21 @@ namespace Jamba_Tips
             }
         }
 
+        private void checkBoxColorlessTable_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxColorlessTable.Checked)
+            {
+                PaintControl(dataGridView1, new ColorScheme("B&W", System.Drawing.Color.White, System.Drawing.Color.White, System.Drawing.Color.White, System.Drawing.Color.Black));
+                dataGridView1.ClearSelection();
+            }
+            else
+            {
+                ColorScheme colorScheme;
+                if (GetColorScheme(currentScheme, out colorScheme))
+                    PaintControl(dataGridView1, colorScheme);
+            }
+        }
+
         #endregion
 
 
@@ -1285,8 +1352,33 @@ namespace Jamba_Tips
         {
             if (!loading && comboBoxColorSchemes.SelectedItem != null && comboBoxColorSchemes.Text.Length > 0)
             {
-                PaintApplication(comboBoxColorSchemes.Text);
+                PaintThisApplication(comboBoxColorSchemes.Text);
             }
+        }
+
+        private void buttonFilters_Click(object sender, EventArgs e)
+        {
+            if (dataFilterForm == null)
+            {
+                dataFilterForm = new DataFilterForm();
+                dataFilterForm.parent = this;
+                dataFilterForm.FormClosed += DataFilterForm_FormClosed;
+                dataFilterForm.Show();
+            }
+        }
+
+        private void DataFilterForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            try
+            {
+                dataFilterForm.Dispose();
+            }
+            catch { }
+            try
+            {
+                dataFilterForm = null;
+            }
+            catch { }
         }
 
         #endregion

@@ -63,15 +63,6 @@ namespace Jamba_Tips.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
         /// </summary>
-        internal static System.IO.UnmanagedMemoryStream _343490__mafon2__comical_screams {
-            get {
-                return ResourceManager.GetStream("_343490__mafon2__comical_screams", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
-        /// </summary>
         internal static System.IO.UnmanagedMemoryStream collierhs_colinlib__elevator_ding {
             get {
                 return ResourceManager.GetStream("collierhs_colinlib__elevator_ding", resourceCulture);
@@ -81,9 +72,9 @@ namespace Jamba_Tips.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
         /// </summary>
-        internal static System.IO.UnmanagedMemoryStream he {
+        internal static System.IO.UnmanagedMemoryStream kizilsungur__sweetalertsound4 {
             get {
-                return ResourceManager.GetStream("he", resourceCulture);
+                return ResourceManager.GetStream("kizilsungur__sweetalertsound4", resourceCulture);
             }
         }
     }
