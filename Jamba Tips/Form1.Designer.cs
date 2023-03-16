@@ -80,6 +80,8 @@ namespace Jamba_Tips
             this.numericUpDownDays = new System.Windows.Forms.NumericUpDown();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPageTables = new System.Windows.Forms.TabPage();
+            this.panel10 = new System.Windows.Forms.Panel();
+            this.checkBoxColorlessTable = new System.Windows.Forms.CheckBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.columnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.columnHours = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -100,6 +102,7 @@ namespace Jamba_Tips
             this.button4 = new System.Windows.Forms.Button();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.panel9 = new System.Windows.Forms.Panel();
+            this.buttonFilters = new System.Windows.Forms.Button();
             this.comboBoxColorSchemes = new System.Windows.Forms.ComboBox();
             this.checkBoxNormalizedNames = new System.Windows.Forms.CheckBox();
             this.labelVersion = new System.Windows.Forms.Label();
@@ -108,9 +111,6 @@ namespace Jamba_Tips
             this.button8 = new System.Windows.Forms.Button();
             this.timerClipboardMonitor = new System.Windows.Forms.Timer(this.components);
             this.timerAutoSave = new System.Windows.Forms.Timer(this.components);
-            this.panel10 = new System.Windows.Forms.Panel();
-            this.checkBoxColorlessTable = new System.Windows.Forms.CheckBox();
-            this.buttonFilters = new System.Windows.Forms.Button();
             tabPage4 = new System.Windows.Forms.TabPage();
             tabPage4.SuspendLayout();
             this.panel8.SuspendLayout();
@@ -130,6 +130,7 @@ namespace Jamba_Tips
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDays)).BeginInit();
             this.tabControl2.SuspendLayout();
             this.tabPageTables.SuspendLayout();
+            this.panel10.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStripDataGridView.SuspendLayout();
             this.tabPageText.SuspendLayout();
@@ -138,7 +139,6 @@ namespace Jamba_Tips
             this.panel5.SuspendLayout();
             this.tabPage5.SuspendLayout();
             this.panel9.SuspendLayout();
-            this.panel10.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabPage4
@@ -149,7 +149,7 @@ namespace Jamba_Tips
             tabPage4.Location = new System.Drawing.Point(4, 31);
             tabPage4.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             tabPage4.Name = "tabPage4";
-            tabPage4.Size = new System.Drawing.Size(844, 410);
+            tabPage4.Size = new System.Drawing.Size(1165, 749);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "Days";
             // 
@@ -280,7 +280,7 @@ namespace Jamba_Tips
             this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1173, 784);
+            this.tabControl1.Size = new System.Drawing.Size(1173, 701);
             this.tabControl1.TabIndex = 0;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
@@ -294,7 +294,7 @@ namespace Jamba_Tips
             this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tabPage1.Size = new System.Drawing.Size(1165, 749);
+            this.tabPage1.Size = new System.Drawing.Size(1165, 666);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Data Entry";
             // 
@@ -308,7 +308,7 @@ namespace Jamba_Tips
             this.panel3.Controls.Add(this.listBoxOutput);
             this.panel3.Location = new System.Drawing.Point(12, 186);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1139, 555);
+            this.panel3.Size = new System.Drawing.Size(1139, 472);
             this.panel3.TabIndex = 13;
             // 
             // tableLayoutPanel3
@@ -347,7 +347,7 @@ namespace Jamba_Tips
             this.listBoxOutput.Location = new System.Drawing.Point(4, 34);
             this.listBoxOutput.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.listBoxOutput.Name = "listBoxOutput";
-            this.listBoxOutput.Size = new System.Drawing.Size(1127, 488);
+            this.listBoxOutput.Size = new System.Drawing.Size(1127, 400);
             this.listBoxOutput.TabIndex = 5;
             // 
             // panel2
@@ -735,6 +735,28 @@ namespace Jamba_Tips
             this.tabPageTables.Text = "Table";
             this.tabPageTables.UseVisualStyleBackColor = true;
             // 
+            // panel10
+            // 
+            this.panel10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel10.BackColor = System.Drawing.Color.Black;
+            this.panel10.Controls.Add(this.checkBoxColorlessTable);
+            this.panel10.Location = new System.Drawing.Point(7, 8);
+            this.panel10.Name = "panel10";
+            this.panel10.Size = new System.Drawing.Size(1117, 33);
+            this.panel10.TabIndex = 3;
+            // 
+            // checkBoxColorlessTable
+            // 
+            this.checkBoxColorlessTable.AutoSize = true;
+            this.checkBoxColorlessTable.Location = new System.Drawing.Point(3, 3);
+            this.checkBoxColorlessTable.Name = "checkBoxColorlessTable";
+            this.checkBoxColorlessTable.Size = new System.Drawing.Size(182, 26);
+            this.checkBoxColorlessTable.TabIndex = 0;
+            this.checkBoxColorlessTable.Text = "Black and White Table";
+            this.checkBoxColorlessTable.UseVisualStyleBackColor = true;
+            this.checkBoxColorlessTable.CheckedChanged += new System.EventHandler(this.checkBoxColorlessTable_CheckedChanged);
+            // 
             // dataGridView1
             // 
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.Black;
@@ -844,7 +866,7 @@ namespace Jamba_Tips
             this.tabPageText.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabPageText.Name = "tabPageText";
             this.tabPageText.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tabPageText.Size = new System.Drawing.Size(810, 237);
+            this.tabPageText.Size = new System.Drawing.Size(1131, 576);
             this.tabPageText.TabIndex = 1;
             this.tabPageText.Text = "Text";
             this.tabPageText.UseVisualStyleBackColor = true;
@@ -858,7 +880,7 @@ namespace Jamba_Tips
             this.richTextBoxOutput.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.richTextBoxOutput.Name = "richTextBoxOutput";
             this.richTextBoxOutput.ReadOnly = true;
-            this.richTextBoxOutput.Size = new System.Drawing.Size(802, 227);
+            this.richTextBoxOutput.Size = new System.Drawing.Size(1123, 566);
             this.richTextBoxOutput.TabIndex = 0;
             this.richTextBoxOutput.Text = "";
             // 
@@ -870,7 +892,7 @@ namespace Jamba_Tips
             this.tabPage3.Location = new System.Drawing.Point(4, 31);
             this.tabPage3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(844, 410);
+            this.tabPage3.Size = new System.Drawing.Size(1165, 749);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Employees";
             // 
@@ -1001,7 +1023,7 @@ namespace Jamba_Tips
             this.tabPage5.Location = new System.Drawing.Point(4, 31);
             this.tabPage5.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(1165, 749);
+            this.tabPage5.Size = new System.Drawing.Size(1165, 666);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Settings";
             // 
@@ -1020,8 +1042,21 @@ namespace Jamba_Tips
             this.panel9.Controls.Add(this.button8);
             this.panel9.Location = new System.Drawing.Point(12, 8);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(1145, 733);
+            this.panel9.Size = new System.Drawing.Size(1145, 650);
             this.panel9.TabIndex = 16;
+            // 
+            // buttonFilters
+            // 
+            this.buttonFilters.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonFilters.ForeColor = System.Drawing.Color.Gold;
+            this.buttonFilters.Location = new System.Drawing.Point(5, 163);
+            this.buttonFilters.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.buttonFilters.Name = "buttonFilters";
+            this.buttonFilters.Size = new System.Drawing.Size(112, 51);
+            this.buttonFilters.TabIndex = 11;
+            this.buttonFilters.Text = "Filters";
+            this.buttonFilters.UseVisualStyleBackColor = true;
+            this.buttonFilters.Click += new System.EventHandler(this.buttonFilters_Click);
             // 
             // comboBoxColorSchemes
             // 
@@ -1107,48 +1142,13 @@ namespace Jamba_Tips
             this.timerAutoSave.Interval = 5000;
             this.timerAutoSave.Tick += new System.EventHandler(this.timerAutoSave_Tick);
             // 
-            // panel10
-            // 
-            this.panel10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel10.BackColor = System.Drawing.Color.Black;
-            this.panel10.Controls.Add(this.checkBoxColorlessTable);
-            this.panel10.Location = new System.Drawing.Point(7, 8);
-            this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(1117, 33);
-            this.panel10.TabIndex = 3;
-            // 
-            // checkBoxColorlessTable
-            // 
-            this.checkBoxColorlessTable.AutoSize = true;
-            this.checkBoxColorlessTable.Location = new System.Drawing.Point(3, 3);
-            this.checkBoxColorlessTable.Name = "checkBoxColorlessTable";
-            this.checkBoxColorlessTable.Size = new System.Drawing.Size(182, 26);
-            this.checkBoxColorlessTable.TabIndex = 0;
-            this.checkBoxColorlessTable.Text = "Black and White Table";
-            this.checkBoxColorlessTable.UseVisualStyleBackColor = true;
-            this.checkBoxColorlessTable.CheckedChanged += new System.EventHandler(this.checkBoxColorlessTable_CheckedChanged);
-            // 
-            // buttonFilters
-            // 
-            this.buttonFilters.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonFilters.ForeColor = System.Drawing.Color.Gold;
-            this.buttonFilters.Location = new System.Drawing.Point(5, 163);
-            this.buttonFilters.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.buttonFilters.Name = "buttonFilters";
-            this.buttonFilters.Size = new System.Drawing.Size(112, 51);
-            this.buttonFilters.TabIndex = 11;
-            this.buttonFilters.Text = "Filters";
-            this.buttonFilters.UseVisualStyleBackColor = true;
-            this.buttonFilters.Click += new System.EventHandler(this.buttonFilters_Click);
-            // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 22F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(1173, 784);
+            this.ClientSize = new System.Drawing.Size(1173, 701);
             this.Controls.Add(this.tabControl1);
             this.Font = new System.Drawing.Font("Palatino Linotype", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.Gold;
@@ -1184,6 +1184,8 @@ namespace Jamba_Tips
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDays)).EndInit();
             this.tabControl2.ResumeLayout(false);
             this.tabPageTables.ResumeLayout(false);
+            this.panel10.ResumeLayout(false);
+            this.panel10.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.contextMenuStripDataGridView.ResumeLayout(false);
             this.tabPageText.ResumeLayout(false);
@@ -1195,8 +1197,6 @@ namespace Jamba_Tips
             this.tabPage5.ResumeLayout(false);
             this.panel9.ResumeLayout(false);
             this.panel9.PerformLayout();
-            this.panel10.ResumeLayout(false);
-            this.panel10.PerformLayout();
             this.ResumeLayout(false);
 
         }

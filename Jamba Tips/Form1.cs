@@ -40,6 +40,8 @@ namespace Jamba_Tips
 
         public CurrentCellType currentCellType = CurrentCellType.None;
 
+        public Dictionary<DateTime, List<string>> flaggedDays= new Dictionary<DateTime, List<string>>();
+
         public enum CurrentCellType
         {
             Name,
@@ -410,7 +412,7 @@ namespace Jamba_Tips
         {
             filters.Clear();
             foreach (string filter in Properties.Settings.Default.Filters)
-                filters.Add(filter);
+                filters.Add(filter.ToLower());
         }
 
         #endregion
@@ -520,6 +522,8 @@ namespace Jamba_Tips
                     System.Media.SoundPlayer snd = new System.Media.SoundPlayer(Properties.Resources.kizilsungur__sweetalertsound4);
                     snd.Play();
                 }
+
+                flaggedDays.Clear();
             }
             catch { LongOutput("Error caught parsing clipboard data. "); }
         }
@@ -535,7 +539,6 @@ namespace Jamba_Tips
                 string currentLine, finalKey = "Weekly Totals";
                 decimal parsedHours = 0m, bestHours = 0m;
                 DateTime parsedDate;
-                bool filterTriggered = false;
 
                 for (int i = 1; i < dayKeys.Length; i++)
                 {
@@ -561,16 +564,21 @@ namespace Jamba_Tips
                 text = text.Substring(subIndex);
 
                 lineArray = currentLine.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                StringBuilder builder = new StringBuilder();
                 if (lineArray.Length > 0)
                 {
                     if (GetDate(lineArray[0], out parsedDate))
                     {
                         lineArray = lineArray[lineArray.Length - 1].Split('	');
                         for (int i = 0; i < lineArray.Length; i++)
+                            builder.Append($"{(builder.Length > 0 ? ", " : "")}'{lineArray[i]}'");
+                        for (int i = 0; i < lineArray.Length; i++)
                         {
                             if (IsFiltered(lineArray[i]))
                             {
-                                filterTriggered = true;
+                                if (!flaggedDays.ContainsKey(parsedDate))
+                                    flaggedDays[parsedDate] = new List<string>();
+                                flaggedDays[parsedDate].Add(name);
                                 continue;
                             }
                             if (decimal.TryParse(lineArray[i], out parsedHours) && parsedHours > 0m)
@@ -578,7 +586,7 @@ namespace Jamba_Tips
                         }
                         if (bestHours > 0m)
                         {
-                            if (!filterTriggered)
+                            if (!flaggedDays.ContainsKey(parsedDate) || !flaggedDays[parsedDate].Contains(name))
                             {
                                 AddDay(new EmployeeDay() { name = name, day = parsedDate, hours = bestHours });
                                 return ExtractionStatus.Success;
