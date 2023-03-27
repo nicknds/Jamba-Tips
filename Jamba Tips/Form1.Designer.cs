@@ -149,7 +149,7 @@ namespace Jamba_Tips
             tabPage4.Location = new System.Drawing.Point(4, 31);
             tabPage4.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             tabPage4.Name = "tabPage4";
-            tabPage4.Size = new System.Drawing.Size(1165, 749);
+            tabPage4.Size = new System.Drawing.Size(1165, 666);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "Days";
             // 
@@ -162,7 +162,7 @@ namespace Jamba_Tips
             this.panel8.Controls.Add(this.buttonRemoveDayEmployee);
             this.panel8.Location = new System.Drawing.Point(376, 8);
             this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(358, 394);
+            this.panel8.Size = new System.Drawing.Size(358, 650);
             this.panel8.TabIndex = 16;
             // 
             // listBoxDaysEmployees
@@ -176,7 +176,7 @@ namespace Jamba_Tips
             this.listBoxDaysEmployees.Location = new System.Drawing.Point(4, 5);
             this.listBoxDaysEmployees.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.listBoxDaysEmployees.Name = "listBoxDaysEmployees";
-            this.listBoxDaysEmployees.Size = new System.Drawing.Size(225, 378);
+            this.listBoxDaysEmployees.Size = new System.Drawing.Size(225, 620);
             this.listBoxDaysEmployees.TabIndex = 5;
             // 
             // buttonRemoveDayEmployee
@@ -203,7 +203,7 @@ namespace Jamba_Tips
             this.panel7.Controls.Add(this.button6);
             this.panel7.Location = new System.Drawing.Point(12, 8);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(358, 394);
+            this.panel7.Size = new System.Drawing.Size(358, 650);
             this.panel7.TabIndex = 15;
             // 
             // listBoxDays
@@ -217,7 +217,7 @@ namespace Jamba_Tips
             this.listBoxDays.Location = new System.Drawing.Point(4, 5);
             this.listBoxDays.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.listBoxDays.Name = "listBoxDays";
-            this.listBoxDays.Size = new System.Drawing.Size(225, 378);
+            this.listBoxDays.Size = new System.Drawing.Size(225, 620);
             this.listBoxDays.TabIndex = 3;
             this.listBoxDays.SelectedIndexChanged += new System.EventHandler(this.listBoxDays_SelectedIndexChanged);
             // 
@@ -545,7 +545,7 @@ namespace Jamba_Tips
             this.tabPage2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tabPage2.Size = new System.Drawing.Size(1165, 749);
+            this.tabPage2.Size = new System.Drawing.Size(1165, 666);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Calculator";
             // 
@@ -719,7 +719,7 @@ namespace Jamba_Tips
             this.tabControl2.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(1139, 611);
+            this.tabControl2.Size = new System.Drawing.Size(1139, 528);
             this.tabControl2.TabIndex = 10;
             // 
             // tabPageTables
@@ -730,7 +730,7 @@ namespace Jamba_Tips
             this.tabPageTables.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabPageTables.Name = "tabPageTables";
             this.tabPageTables.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tabPageTables.Size = new System.Drawing.Size(1131, 576);
+            this.tabPageTables.Size = new System.Drawing.Size(1131, 493);
             this.tabPageTables.TabIndex = 0;
             this.tabPageTables.Text = "Table";
             this.tabPageTables.UseVisualStyleBackColor = true;
@@ -815,7 +815,7 @@ namespace Jamba_Tips
             this.dataGridView1.ShowCellToolTips = false;
             this.dataGridView1.ShowEditingIcon = false;
             this.dataGridView1.ShowRowErrors = false;
-            this.dataGridView1.Size = new System.Drawing.Size(1131, 532);
+            this.dataGridView1.Size = new System.Drawing.Size(1131, 449);
             this.dataGridView1.TabIndex = 2;
             this.dataGridView1.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView1_CellBeginEdit);
             this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellEndEdit);
@@ -892,7 +892,7 @@ namespace Jamba_Tips
             this.tabPage3.Location = new System.Drawing.Point(4, 31);
             this.tabPage3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(1165, 749);
+            this.tabPage3.Size = new System.Drawing.Size(1165, 666);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Employees";
             // 
@@ -907,7 +907,7 @@ namespace Jamba_Tips
             this.panel6.Controls.Add(this.button5);
             this.panel6.Location = new System.Drawing.Point(376, 8);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(358, 394);
+            this.panel6.Size = new System.Drawing.Size(358, 650);
             this.panel6.TabIndex = 15;
             // 
             // listBoxEmployeeDays
@@ -921,7 +921,7 @@ namespace Jamba_Tips
             this.listBoxEmployeeDays.Location = new System.Drawing.Point(4, 5);
             this.listBoxEmployeeDays.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.listBoxEmployeeDays.Name = "listBoxEmployeeDays";
-            this.listBoxEmployeeDays.Size = new System.Drawing.Size(225, 378);
+            this.listBoxEmployeeDays.Size = new System.Drawing.Size(225, 620);
             this.listBoxEmployeeDays.TabIndex = 3;
             this.listBoxEmployeeDays.SelectedIndexChanged += new System.EventHandler(this.listBoxEmployeeDays_SelectedIndexChanged);
             // 
@@ -972,7 +972,7 @@ namespace Jamba_Tips
             this.panel5.Controls.Add(this.button4);
             this.panel5.Location = new System.Drawing.Point(12, 8);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(358, 394);
+            this.panel5.Size = new System.Drawing.Size(358, 650);
             this.panel5.TabIndex = 14;
             // 
             // listBoxEmployees
@@ -986,7 +986,7 @@ namespace Jamba_Tips
             this.listBoxEmployees.Location = new System.Drawing.Point(4, 5);
             this.listBoxEmployees.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.listBoxEmployees.Name = "listBoxEmployees";
-            this.listBoxEmployees.Size = new System.Drawing.Size(225, 378);
+            this.listBoxEmployees.Size = new System.Drawing.Size(225, 620);
             this.listBoxEmployees.TabIndex = 0;
             this.listBoxEmployees.SelectedIndexChanged += new System.EventHandler(this.listBoxEmployees_SelectedIndexChanged);
             // 

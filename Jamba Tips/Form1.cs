@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -18,11 +17,9 @@ namespace Jamba_Tips
 
         public SortedList<DateTime, SortedList<int, decimal>> dailyTipValues = new SortedList<DateTime, SortedList<int, decimal>>();
 
-        public List<string> blacklistedEmployees = new List<string>();
+        public HashSet<string> filters = new HashSet<string>(), blacklistedEmployees = new HashSet<string>();
 
-        public HashSet<string> filters = new HashSet<string>();
-
-        public bool loading = false;
+        public bool loading = false, normalizeNames;
 
         public DebugForm debugForm;
 
@@ -34,7 +31,7 @@ namespace Jamba_Tips
 
         public string[] monthsInYear = new string[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
-        public string lastClipBoard = "", currentCellString = "", currentScheme = "";
+        public string lastClipBoard = "", currentCellString = "", currentScheme = "Black & Gold";
 
         public decimal currentCellDecimal = 0m;
 
@@ -64,6 +61,7 @@ namespace Jamba_Tips
         public Form1()
         {
             InitializeComponent();
+            filters.Add("sick");
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -71,13 +69,11 @@ namespace Jamba_Tips
             loading = true;
             labelVersion.Text = $"Version: {Assembly.GetExecutingAssembly().GetName().Version}";
             LoadColorSchemes();
-            PaintThisApplication(Properties.Settings.Default.ColorScheme);
-            comboBoxColorSchemes.Text = Properties.Settings.Default.ColorScheme;
 
-            foreach (string str in Properties.Settings.Default.BlacklistedEmployees)
-                blacklistedEmployees.Add(str);
-            LoadEmployees();
-            checkBoxNormalizedNames.Checked = Properties.Settings.Default.NormalizedNames;
+            LoadData2();
+
+            comboBoxColorSchemes.Text = currentScheme;
+
             if (employeeTotalList.Count > 0)
                 Output($"Loaded employees: {employeeTotalList.Count}");
             if (dailyTipValues.Count > 0)
@@ -93,8 +89,6 @@ namespace Jamba_Tips
                 if (clipboardText != String.Empty && !CompareStrings(clipboardText, lastClipBoard))
                     lastClipBoard = clipboardText;
             }
-
-            UpdateFilters();
 
             loading = false;
         }
@@ -215,41 +209,62 @@ namespace Jamba_Tips
 
         #region Main Functions
 
-        public void SaveData()
+        public void SaveData2()
         {
             Record("Saving Data");
-            Properties.Settings.Default.EmployeeDays.Clear();
+
+            StringBuilder builder = new StringBuilder();
+
+            builder.AppendLine($"Color Scheme={currentScheme}");
+            builder.AppendLine($"Normalized Names={normalizeNames}");
+            builder.Append("Filters=");
+            int filterCount = 0, blackListCount = 0;
+            foreach (string filter in filters)
+            {
+                builder.Append($"{(filterCount > 0 ? "‡" : "")}{filter}");
+                filterCount++;
+            }
+            builder.AppendLine();
 
             foreach (KeyValuePair<string, EmployeeTotal> kvpA in employeeTotalList)
             {
                 foreach (KeyValuePair<DateTime, EmployeeDay> kvpB in kvpA.Value.employeeDays)
                 {
-                    Properties.Settings.Default.EmployeeDays.Add(kvpB.Value.ToString());
+                    builder.AppendLine($"Employee Day={kvpB.Value.ToString()}");
                 }
             }
-
-            Properties.Settings.Default.DailyTips.Clear();
 
             foreach (KeyValuePair<DateTime, SortedList<int, decimal>> kvpA in dailyTipValues)
             {
                 foreach (KeyValuePair<int, decimal> kvpB in kvpA.Value)
-                    Properties.Settings.Default.DailyTips.Add($"{kvpB.Value}♠{kvpA.Key.Month}♠{kvpA.Key.Day}♠{kvpB.Key}");
+                    builder.AppendLine($"Tips={kvpB.Value}♠{kvpA.Key.Month}♠{kvpA.Key.Day}♠{kvpB.Key}");
             }
 
-            Properties.Settings.Default.BlacklistedEmployees.Clear();
-
+            builder.Append("Blacklist=");
             foreach (string str in blacklistedEmployees)
             {
-                Properties.Settings.Default.BlacklistedEmployees.Add(str);
+                builder.Append($"{(blackListCount > 0 ? "‡" : "")}{str}");
+                blackListCount++;
             }
+            builder.AppendLine();
 
-            Properties.Settings.Default.Save();
-            Record("Saving Data", false);
+            File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), "Jamba.Tips.data"), builder.ToString().TrimEnd());
         }
 
-        public void LoadEmployees()
+        public void LoadData2()
         {
             Record("Loading Data");
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "Jamba.Tips.data");
+            if (File.Exists(path))
+            {
+                StreamReader reader = new StreamReader(path);
+                while (!reader.EndOfStream)
+                {
+                    LoadLine(reader.ReadLine().Trim());
+                }
+                reader.Close();
+            }
+            //Backwards compatible settings
             foreach (string str in Properties.Settings.Default.EmployeeDays)
             {
                 AddDay(new EmployeeDay(str));
@@ -258,6 +273,7 @@ namespace Jamba_Tips
             string[] args;
             DateTime key;
             int dayKey;
+            //Backwards compatible settings
             foreach (string str in Properties.Settings.Default.DailyTips)
             {
                 args = str.Split('♠');
@@ -269,6 +285,59 @@ namespace Jamba_Tips
                 dailyTipValues[key][dayKey] = decimal.Parse(args[0]);
             }
             Record("Loading Data", false);
+        }
+
+        public void LoadLine(string text)
+        {
+            string key, data;
+            int index = text.IndexOf("=");
+            if (index <= 0) return;
+            key = text.Substring(0, index);
+            data = text.Substring(index + 1);
+            bool dataBoolean = String.Compare(data, "true", true) == 0;
+
+            switch (key)
+            {
+                case "Employee Day":
+                    AddDay(new EmployeeDay(data));
+                    break;
+                case "Tips":
+                    AddTip(data);
+                    break;
+                case "Blacklist":
+                    string[] blackListArray = data.Split(new char[] { '‡' }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int i = 0; i < blackListArray.Length; i++)
+                        if (blackListArray[i].Length > 0)
+                            blacklistedEmployees.Add(blackListArray[i]);
+                    break;
+                case "Normalized Names":
+                    normalizeNames = dataBoolean;
+                    checkBoxNormalizedNames.Checked = normalizeNames;
+                    break;
+                case "Color Scheme":
+                    PaintThisApplication(data);
+                    break;
+                case "Filters":
+                    string[] filterArray = data.Split(new char[] { '‡' }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int i = 0; i < filterArray.Length; i++)
+                        if (filterArray[i].Length > 0)
+                            filters.Add(filterArray[i].ToLower());
+                    break;
+            }
+        }
+
+        public void AddTip(string text)
+        {
+            string[] args;
+            DateTime key;
+            int dayKey;
+            args = text.Split('♠');
+            key = new DateTime(DateTime.Now.Year, int.Parse(args[1]), int.Parse(args[2]));
+            if (args.Length < 4 || args[3].Length == 0 || !int.TryParse(args[3], out dayKey))
+                dayKey = 7;
+            if (!dailyTipValues.ContainsKey(key))
+                dailyTipValues[key] = new SortedList<int, decimal>();
+            dailyTipValues[key][dayKey] = decimal.Parse(args[0]);
         }
 
         public decimal RoundMoney(decimal value)
@@ -378,9 +447,8 @@ namespace Jamba_Tips
             ColorScheme scheme;
             if (!CompareStrings(schemeName, currentScheme) && GetColorScheme(schemeName, out scheme))
             {
-                Properties.Settings.Default.ColorScheme = schemeName;
                 currentScheme = schemeName;
-                Properties.Settings.Default.Save();
+                StartAutosave();
                 PaintApplication(this, scheme);
             }
         }
@@ -408,13 +476,6 @@ namespace Jamba_Tips
             return false;
         }
 
-        public void UpdateFilters()
-        {
-            filters.Clear();
-            foreach (string filter in Properties.Settings.Default.Filters)
-                filters.Add(filter.ToLower());
-        }
-
         #endregion
 
 
@@ -423,7 +484,7 @@ namespace Jamba_Tips
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             Output("Saving before close...");
-            SaveData();
+            SaveData2();
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -448,7 +509,7 @@ namespace Jamba_Tips
         private void timerAutoSave_Tick(object sender, EventArgs e)
         {
             timerAutoSave.Stop();
-            SaveData();
+            SaveData2();
         }
 
         #endregion
@@ -488,7 +549,7 @@ namespace Jamba_Tips
                 index = text.IndexOf(keyName);
                 subString = text.Substring(index);
                 lineArray = subString.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-                name = Properties.Settings.Default.NormalizedNames ? NormalizeName(lineArray[1]) : lineArray[1];
+                name = normalizeNames ? NormalizeName(lineArray[1]) : lineArray[1];
                 LongOutput($"Name from clipboard: {name}");
 
                 //Get timecard
@@ -635,6 +696,9 @@ namespace Jamba_Tips
 
         public void AddDay(EmployeeDay day)
         {
+            if (IsNameReversed(day.name))
+                day.name = ReverseName(day.name);
+
             if (!employeeTotalList.ContainsKey(day.name))
                 employeeTotalList[day.name] = new EmployeeTotal();
 
@@ -665,10 +729,34 @@ namespace Jamba_Tips
 
         public void SetAutoFill()
         {
-            comboBoxEmployeeName.AutoCompleteCustomSource.Clear();
-            comboBoxEmployeeName.AutoCompleteCustomSource.AddRange(employeeTotalList.Keys.ToArray());
+            List<string> reversibleNames = new List<string>();
+            reversibleNames.AddRange(employeeTotalList.Keys.ToArray());
             comboBoxEmployeeName.Items.Clear();
-            comboBoxEmployeeName.Items.AddRange(employeeTotalList.Keys.ToArray());
+            comboBoxEmployeeName.Items.AddRange(reversibleNames.ToArray());
+            for (int i = 0, m = reversibleNames.Count; i < m; i++)
+                reversibleNames.Add(ReverseName(reversibleNames[i]));
+            comboBoxEmployeeName.AutoCompleteCustomSource.Clear();
+            comboBoxEmployeeName.AutoCompleteCustomSource.AddRange(reversibleNames.ToArray());
+        }
+
+        public bool IsNameReversed(string name)
+        {
+            return name.Contains(";") && name.EndsWith("*");
+        }
+
+        public string ReverseName(string name)
+        {
+            int index = name.IndexOf(",");
+            string separator = ";";
+            if (index < 0 && name.EndsWith("*"))
+            {
+                name = name.Substring(0, name.Length - 1);
+                index = name.IndexOf(";");
+                separator = ",";
+            }
+            if (index <= 0) return name;
+
+            return $"{name.Substring(index + 1).Trim()}{separator} {name.Substring(0, index).Trim()}{(String.Compare(";", separator) == 0 ? "*" : "")}";
         }
 
         public bool IsFiltered(string data)
@@ -681,6 +769,14 @@ namespace Jamba_Tips
                         return true;
             }
             return false;
+        }
+
+        public void SetNormalizedNames(bool normalized)
+        {
+            normalizeNames = normalized;
+            loading = true;
+            checkBoxNormalizedNames.Checked = normalizeNames;
+            loading = false;
         }
 
         #endregion
@@ -1168,13 +1264,9 @@ namespace Jamba_Tips
             {
                 string nameKey = listBoxEmployees.SelectedItem.ToString();
                 if (checkBoxWhiteListedTips.Checked)
-                {
                     blacklistedEmployees.Remove(nameKey);
-                }
-                else if (!blacklistedEmployees.Contains(nameKey))
-                {
+                else
                     blacklistedEmployees.Add(nameKey);
-                }
                 StartAutosave();
             }
         }
@@ -1323,10 +1415,10 @@ namespace Jamba_Tips
 
         private void checkBoxNormalizedNames_CheckedChanged(object sender, EventArgs e)
         {
-            if (!loading)
+            if (!loading && normalizeNames != checkBoxNormalizedNames.Checked)
             {
-                Properties.Settings.Default.NormalizedNames = checkBoxNormalizedNames.Checked;
-                Properties.Settings.Default.Save();
+                normalizeNames = checkBoxNormalizedNames.Checked;
+                StartAutosave();
             }
         }
 
